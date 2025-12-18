@@ -1,6 +1,6 @@
 {
   "name": "@acp/cli",
-  "version": "0.1.0",
+  "version": "0.1.1-rc.0",
   "description": "API Contract Platform CLI - Manage and compile API contracts",
   "type": "module",
   "license": "MIT",
