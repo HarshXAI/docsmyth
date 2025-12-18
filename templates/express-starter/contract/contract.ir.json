@@ -1,0 +1,460 @@
+{
+  "irVersion": "0.1",
+  "service": {
+    "name": "my-api-service",
+    "version": "1.0.0",
+    "description": "Product and Order management API"
+  },
+  "operations": [
+    {
+      "operationId": "getHealth",
+      "method": "GET",
+      "path": "/api/health",
+      "summary": "Health check endpoint",
+      "tags": ["Health"],
+      "responses": [
+        {
+          "statusCode": 200,
+          "description": "Service is healthy",
+          "schemaRef": "HealthResponse"
+        }
+      ]
+    },
+    {
+      "operationId": "listProducts",
+      "method": "GET",
+      "path": "/api/products",
+      "summary": "List all products with optional filtering and pagination",
+      "tags": ["Products"],
+      "queryParams": [
+        { "name": "page", "type": "integer", "required": false, "description": "Page number" },
+        { "name": "limit", "type": "integer", "required": false, "description": "Items per page" },
+        {
+          "name": "category",
+          "type": "string",
+          "required": false,
+          "description": "Filter by category"
+        },
+        { "name": "minPrice", "type": "number", "required": false, "description": "Minimum price" },
+        { "name": "maxPrice", "type": "number", "required": false, "description": "Maximum price" },
+        {
+          "name": "inStock",
+          "type": "boolean",
+          "required": false,
+          "description": "Filter by stock"
+        }
+      ],
+      "responses": [
+        {
+          "statusCode": 200,
+          "description": "Paginated list of products",
+          "schemaRef": "ProductListResponse"
+        }
+      ]
+    },
+    {
+      "operationId": "getProduct",
+      "method": "GET",
+      "path": "/api/products/{id}",
+      "summary": "Get a product by ID",
+      "tags": ["Products"],
+      "pathParams": [
+        { "name": "id", "type": "string", "required": true, "description": "Product ID (UUID)" }
+      ],
+      "responses": [
+        {
+          "statusCode": 200,
+          "description": "Product details",
+          "schemaRef": "Product"
+        },
+        {
+          "statusCode": 404,
+          "description": "Product not found",
+          "schemaRef": "ErrorResponse"
+        }
+      ]
+    },
+    {
+      "operationId": "createProduct",
+      "method": "POST",
+      "path": "/api/products",
+      "summary": "Create a new product",
+      "tags": ["Products"],
+      "requestBody": {
+        "required": true,
+        "schemaRef": "CreateProductRequest"
+      },
+      "responses": [
+        {
+          "statusCode": 201,
+          "description": "Product created",
+          "schemaRef": "Product"
+        },
+        {
+          "statusCode": 400,
+          "description": "Validation error",
+          "schemaRef": "ErrorResponse"
+        }
+      ]
+    },
+    {
+      "operationId": "updateProduct",
+      "method": "PUT",
+      "path": "/api/products/{id}",
+      "summary": "Update an existing product",
+      "tags": ["Products"],
+      "pathParams": [
+        { "name": "id", "type": "string", "required": true, "description": "Product ID (UUID)" }
+      ],
+      "requestBody": {
+        "required": true,
+        "schemaRef": "UpdateProductRequest"
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "description": "Product updated",
+          "schemaRef": "Product"
+        },
+        {
+          "statusCode": 400,
+          "description": "Validation error",
+          "schemaRef": "ErrorResponse"
+        },
+        {
+          "statusCode": 404,
+          "description": "Product not found",
+          "schemaRef": "ErrorResponse"
+        }
+      ]
+    },
+    {
+      "operationId": "deleteProduct",
+      "method": "DELETE",
+      "path": "/api/products/{id}",
+      "summary": "Delete a product",
+      "tags": ["Products"],
+      "pathParams": [
+        { "name": "id", "type": "string", "required": true, "description": "Product ID (UUID)" }
+      ],
+      "responses": [
+        {
+          "statusCode": 204,
+          "description": "Product deleted"
+        },
+        {
+          "statusCode": 404,
+          "description": "Product not found",
+          "schemaRef": "ErrorResponse"
+        }
+      ]
+    },
+    {
+      "operationId": "listOrders",
+      "method": "GET",
+      "path": "/api/orders",
+      "summary": "List all orders with optional filtering",
+      "tags": ["Orders"],
+      "queryParams": [
+        { "name": "page", "type": "integer", "required": false },
+        { "name": "limit", "type": "integer", "required": false },
+        { "name": "customerId", "type": "string", "required": false },
+        { "name": "status", "type": "string", "required": false }
+      ],
+      "responses": [
+        {
+          "statusCode": 200,
+          "description": "Paginated list of orders",
+          "schemaRef": "OrderListResponse"
+        }
+      ]
+    },
+    {
+      "operationId": "getOrder",
+      "method": "GET",
+      "path": "/api/orders/{id}",
+      "summary": "Get an order by ID",
+      "tags": ["Orders"],
+      "pathParams": [
+        { "name": "id", "type": "string", "required": true, "description": "Order ID (UUID)" }
+      ],
+      "responses": [
+        {
+          "statusCode": 200,
+          "description": "Order details",
+          "schemaRef": "Order"
+        },
+        {
+          "statusCode": 404,
+          "description": "Order not found",
+          "schemaRef": "ErrorResponse"
+        }
+      ]
+    },
+    {
+      "operationId": "createOrder",
+      "method": "POST",
+      "path": "/api/orders",
+      "summary": "Create a new order",
+      "tags": ["Orders"],
+      "requestBody": {
+        "required": true,
+        "schemaRef": "CreateOrderRequest"
+      },
+      "responses": [
+        {
+          "statusCode": 201,
+          "description": "Order created",
+          "schemaRef": "Order"
+        },
+        {
+          "statusCode": 400,
+          "description": "Validation error",
+          "schemaRef": "ErrorResponse"
+        },
+        {
+          "statusCode": 422,
+          "description": "Product not found or out of stock",
+          "schemaRef": "ErrorResponse"
+        }
+      ]
+    },
+    {
+      "operationId": "updateOrderStatus",
+      "method": "PATCH",
+      "path": "/api/orders/{id}/status",
+      "summary": "Update order status",
+      "tags": ["Orders"],
+      "pathParams": [
+        { "name": "id", "type": "string", "required": true, "description": "Order ID (UUID)" }
+      ],
+      "requestBody": {
+        "required": true,
+        "schemaRef": "UpdateOrderStatusRequest"
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "description": "Order status updated",
+          "schemaRef": "Order"
+        },
+        {
+          "statusCode": 400,
+          "description": "Validation error",
+          "schemaRef": "ErrorResponse"
+        },
+        {
+          "statusCode": 404,
+          "description": "Order not found",
+          "schemaRef": "ErrorResponse"
+        }
+      ]
+    }
+  ],
+  "schemas": {
+    "HealthResponse": {
+      "type": "object",
+      "properties": {
+        "status": { "type": "string", "enum": ["healthy", "degraded", "unhealthy"] },
+        "version": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "status": { "type": "string", "enum": ["pass", "fail"] },
+              "message": { "type": "string" }
+            },
+            "required": ["name", "status"]
+          }
+        }
+      },
+      "required": ["status", "version", "timestamp"]
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "code": { "type": "string" },
+        "message": { "type": "string" },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "field": { "type": "string" },
+              "message": { "type": "string" }
+            },
+            "required": ["field", "message"]
+          }
+        },
+        "requestId": { "type": "string" }
+      },
+      "required": ["code", "message"]
+    },
+    "Product": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "description": { "type": "string", "maxLength": 2000 },
+        "price": { "type": "number", "minimum": 0 },
+        "currency": { "type": "string", "minLength": 3, "maxLength": 3 },
+        "category": {
+          "type": "string",
+          "enum": ["electronics", "clothing", "food", "books", "other"]
+        },
+        "inStock": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "id",
+        "name",
+        "price",
+        "currency",
+        "category",
+        "inStock",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "CreateProductRequest": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "description": { "type": "string", "maxLength": 2000 },
+        "price": { "type": "number", "minimum": 0 },
+        "currency": { "type": "string", "minLength": 3, "maxLength": 3, "default": "USD" },
+        "category": {
+          "type": "string",
+          "enum": ["electronics", "clothing", "food", "books", "other"]
+        },
+        "inStock": { "type": "boolean", "default": true }
+      },
+      "required": ["name", "price", "category"]
+    },
+    "UpdateProductRequest": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "description": { "type": "string", "maxLength": 2000 },
+        "price": { "type": "number", "minimum": 0 },
+        "currency": { "type": "string", "minLength": 3, "maxLength": 3 },
+        "category": {
+          "type": "string",
+          "enum": ["electronics", "clothing", "food", "books", "other"]
+        },
+        "inStock": { "type": "boolean" }
+      }
+    },
+    "ProductListResponse": {
+      "type": "object",
+      "properties": {
+        "items": { "type": "array", "items": { "$ref": "#/schemas/Product" } },
+        "pagination": { "$ref": "#/schemas/PaginationInfo" }
+      },
+      "required": ["items", "pagination"]
+    },
+    "PaginationInfo": {
+      "type": "object",
+      "properties": {
+        "page": { "type": "integer" },
+        "limit": { "type": "integer" },
+        "total": { "type": "integer" },
+        "totalPages": { "type": "integer" }
+      },
+      "required": ["page", "limit", "total", "totalPages"]
+    },
+    "Order": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "customerId": { "type": "string", "format": "uuid" },
+        "items": { "type": "array", "items": { "$ref": "#/schemas/OrderItem" } },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "confirmed", "processing", "shipped", "delivered", "cancelled"]
+        },
+        "totalAmount": { "type": "number", "minimum": 0 },
+        "currency": { "type": "string" },
+        "shippingAddress": { "$ref": "#/schemas/ShippingAddress" },
+        "notes": { "type": "string", "maxLength": 500 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "id",
+        "customerId",
+        "items",
+        "status",
+        "totalAmount",
+        "currency",
+        "shippingAddress",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "OrderItem": {
+      "type": "object",
+      "properties": {
+        "productId": { "type": "string", "format": "uuid" },
+        "quantity": { "type": "integer", "minimum": 1 },
+        "unitPrice": { "type": "number", "minimum": 0 }
+      },
+      "required": ["productId", "quantity", "unitPrice"]
+    },
+    "ShippingAddress": {
+      "type": "object",
+      "properties": {
+        "street": { "type": "string" },
+        "city": { "type": "string" },
+        "state": { "type": "string" },
+        "postalCode": { "type": "string" },
+        "country": { "type": "string", "minLength": 2, "maxLength": 2 }
+      },
+      "required": ["street", "city", "postalCode", "country"]
+    },
+    "CreateOrderRequest": {
+      "type": "object",
+      "properties": {
+        "customerId": { "type": "string", "format": "uuid" },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "productId": { "type": "string", "format": "uuid" },
+              "quantity": { "type": "integer", "minimum": 1 }
+            },
+            "required": ["productId", "quantity"]
+          },
+          "minItems": 1
+        },
+        "shippingAddress": { "$ref": "#/schemas/ShippingAddress" },
+        "notes": { "type": "string", "maxLength": 500 }
+      },
+      "required": ["customerId", "items", "shippingAddress"]
+    },
+    "UpdateOrderStatusRequest": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["pending", "confirmed", "processing", "shipped", "delivered", "cancelled"]
+        },
+        "notes": { "type": "string", "maxLength": 500 }
+      },
+      "required": ["status"]
+    },
+    "OrderListResponse": {
+      "type": "object",
+      "properties": {
+        "items": { "type": "array", "items": { "$ref": "#/schemas/Order" } },
+        "pagination": { "$ref": "#/schemas/PaginationInfo" }
+      },
+      "required": ["items", "pagination"]
+    }
+  }
+}

@@ -1,0 +1,162 @@
+{
+  "irVersion": "0.1",
+  "service": {
+    "name": "orders-api",
+    "version": "1.0.0",
+    "description": "Order Management API - Minimal HTTP Example",
+    "baseUrls": ["https://api.example.com/v1"]
+  },
+  "schemas": {
+    "CreateOrderRequest": {
+      "$id": "CreateOrderRequest",
+      "type": "object",
+      "required": ["items", "customerId"],
+      "properties": {
+        "customerId": {
+          "type": "string",
+          "description": "Unique identifier for the customer"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["productId", "quantity"],
+            "properties": {
+              "productId": {
+                "type": "string"
+              },
+              "quantity": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "notes": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "notes": {
+          "type": "string",
+          "description": "Optional order notes"
+        }
+      }
+    },
+    "CreateOrderResponse": {
+      "$id": "CreateOrderResponse",
+      "type": "object",
+      "required": ["orderId", "status", "createdAt"],
+      "properties": {
+        "orderId": {
+          "type": "string",
+          "description": "Unique identifier for the created order"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "confirmed", "processing", "shipped", "delivered", "cancelled"]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "estimatedDelivery": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "ErrorResponse": {
+      "$id": "ErrorResponse",
+      "type": "object",
+      "required": ["code", "message"],
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Machine-readable error code"
+        },
+        "message": {
+          "type": "string",
+          "description": "Human-readable error message"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "field": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "requestId": {
+          "type": "string",
+          "description": "Request ID for debugging"
+        }
+      }
+    }
+  },
+  "operations": [
+    {
+      "operationId": "createOrder",
+      "method": "POST",
+      "path": "/orders",
+      "summary": "Create a new order",
+      "description": "Creates a new order for the specified customer with the given items.",
+      "tags": ["orders"],
+      "requestBody": {
+        "description": "Order creation request",
+        "required": true,
+        "contentType": "application/json",
+        "schema": {
+          "$ref": "schema:CreateOrderRequest"
+        }
+      },
+      "responses": [
+        {
+          "statusCode": 201,
+          "description": "Order created successfully",
+          "contentType": "application/json",
+          "schema": {
+            "$ref": "schema:CreateOrderResponse"
+          }
+        },
+        {
+          "statusCode": 400,
+          "description": "Invalid request - validation failed",
+          "contentType": "application/json",
+          "schema": {
+            "$ref": "schema:ErrorResponse"
+          }
+        },
+        {
+          "statusCode": 401,
+          "description": "Authentication required",
+          "contentType": "application/json",
+          "schema": {
+            "$ref": "schema:ErrorResponse"
+          }
+        }
+      ],
+      "security": [
+        {
+          "scheme": "bearerAuth"
+        }
+      ]
+    }
+  ],
+  "securitySchemes": {
+    "bearerAuth": {
+      "type": "http",
+      "scheme": "bearer",
+      "description": "JWT Bearer token authentication"
+    }
+  },
+  "security": [
+    {
+      "scheme": "bearerAuth"
+    }
+  ]
+}

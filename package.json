@@ -1,0 +1,44 @@
+{
+  "name": "api-contract-platform",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "packageManager": "pnpm@9.14.2",
+  "scripts": {
+    "build": "turbo run build",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,yaml,yml}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,yaml,yml}\"",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "acp": "acp",
+    "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm build",
+    "evidence:valid": "pnpm exec acp compile fixtures/evidence/orders-contract.json --out output --evidence fixtures/evidence/orders-evidence.ndjson --verify-evidence --coverage",
+    "evidence:invalid": "pnpm exec acp compile fixtures/evidence/orders-contract.json --out output --evidence fixtures/evidence/invalid-evidence.ndjson --verify-evidence",
+    "diff:test": "pnpm exec acp diff fixtures/diff/base.json fixtures/diff/head-breaking.json --format text",
+    "diff:compatible": "pnpm exec acp diff fixtures/diff/base.json fixtures/diff/head-compatible.json --format text",
+    "ci": "pnpm check && pnpm evidence:valid",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "pnpm check && pnpm smoke:pack && changeset publish",
+    "smoke:pack": "node scripts/smoke-pack.js"
+  },
+  "devDependencies": {
+    "@acp/cli": "workspace:*",
+    "@changesets/changelog-github": "^0.5.2",
+    "@changesets/cli": "^2.29.8",
+    "@types/node": "^20.10.0",
+    "@typescript-eslint/eslint-plugin": "^8.17.0",
+    "@typescript-eslint/parser": "^8.17.0",
+    "eslint": "^9.16.0",
+    "prettier": "^3.4.2",
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

@@ -1,0 +1,216 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://api-contract-platform.dev/schemas/overlay/v0.1.json",
+  "title": "Contract IR Overlay v0.1",
+  "description": "Schema for Contract IR Overlay documents that modify views without mutating the base IR",
+  "type": "object",
+  "required": ["irOverlayVersion", "name"],
+  "properties": {
+    "irOverlayVersion": {
+      "type": "string",
+      "const": "0.1",
+      "description": "Overlay format version"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "description": "Human-readable name for the overlay"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Description of what this overlay does"
+    },
+    "hideOperations": {
+      "type": "array",
+      "description": "Operations to hide from the view",
+      "items": {
+        "$ref": "#/$defs/HideOperation"
+      }
+    },
+    "serverOverrides": {
+      "type": "array",
+      "description": "Server URL overrides",
+      "items": {
+        "$ref": "#/$defs/ServerOverride"
+      }
+    },
+    "schemaRedactions": {
+      "type": "array",
+      "description": "Schema field redactions",
+      "items": {
+        "$ref": "#/$defs/SchemaRedaction"
+      }
+    },
+    "responseRedactions": {
+      "type": "array",
+      "description": "Response-specific field redactions",
+      "items": {
+        "$ref": "#/$defs/ResponseRedaction"
+      }
+    },
+    "requestRedactions": {
+      "type": "array",
+      "description": "Request-specific field redactions",
+      "items": {
+        "$ref": "#/$defs/RequestRedaction"
+      }
+    },
+    "extensions": {
+      "type": "object",
+      "description": "Extension data for custom metadata"
+    }
+  },
+  "$defs": {
+    "HideOperation": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/HideByOperationId"
+        },
+        {
+          "$ref": "#/$defs/HideByMethodPath"
+        }
+      ]
+    },
+    "HideByOperationId": {
+      "type": "object",
+      "required": ["operationId"],
+      "additionalProperties": false,
+      "properties": {
+        "operationId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Operation ID to hide"
+        },
+        "reason": {
+          "type": "string",
+          "description": "Reason for hiding"
+        }
+      }
+    },
+    "HideByMethodPath": {
+      "type": "object",
+      "required": ["method", "path"],
+      "additionalProperties": false,
+      "properties": {
+        "method": {
+          "type": "string",
+          "enum": ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"],
+          "description": "HTTP method"
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Path pattern"
+        },
+        "reason": {
+          "type": "string",
+          "description": "Reason for hiding"
+        }
+      }
+    },
+    "ServerOverride": {
+      "type": "object",
+      "required": ["pattern", "replacement"],
+      "additionalProperties": false,
+      "properties": {
+        "pattern": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Pattern to match (regex or exact)"
+        },
+        "replacement": {
+          "type": "string",
+          "description": "Replacement URL"
+        },
+        "isRegex": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether pattern is a regex"
+        }
+      }
+    },
+    "SchemaRedaction": {
+      "type": "object",
+      "required": ["schemaId", "fields"],
+      "additionalProperties": false,
+      "properties": {
+        "schemaId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Schema ID to redact from"
+        },
+        "fields": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "Fields to remove (dot notation for nested)"
+        },
+        "reason": {
+          "type": "string",
+          "description": "Reason for redaction"
+        }
+      }
+    },
+    "ResponseRedaction": {
+      "type": "object",
+      "required": ["operationId", "fields"],
+      "additionalProperties": false,
+      "properties": {
+        "operationId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Operation ID"
+        },
+        "statusCode": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 599,
+          "description": "Status code (optional, applies to all if not specified)"
+        },
+        "fields": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "Fields to remove from response schema"
+        },
+        "reason": {
+          "type": "string",
+          "description": "Reason for redaction"
+        }
+      }
+    },
+    "RequestRedaction": {
+      "type": "object",
+      "required": ["operationId", "fields"],
+      "additionalProperties": false,
+      "properties": {
+        "operationId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Operation ID"
+        },
+        "fields": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "Fields to remove from request body schema"
+        },
+        "reason": {
+          "type": "string",
+          "description": "Reason for redaction"
+        }
+      }
+    }
+  }
+}

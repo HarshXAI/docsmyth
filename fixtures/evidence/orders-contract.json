@@ -1,0 +1,75 @@
+{
+  "irVersion": "0.1",
+  "service": {
+    "name": "orders-api",
+    "version": "1.0.0"
+  },
+  "schemas": {
+    "Order": {
+      "$id": "Order",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "customerId": { "type": "string" },
+        "total": { "type": "number" }
+      },
+      "required": ["id", "customerId"]
+    },
+    "CreateOrderRequest": {
+      "$id": "CreateOrderRequest",
+      "type": "object",
+      "properties": {
+        "customerId": { "type": "string" },
+        "items": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "required": ["customerId", "items"]
+    }
+  },
+  "operations": [
+    {
+      "operationId": "listOrders",
+      "method": "GET",
+      "path": "/orders",
+      "responses": [
+        {
+          "statusCode": 200,
+          "schema": {
+            "type": "array",
+            "items": { "$ref": "schema:Order" }
+          }
+        }
+      ]
+    },
+    {
+      "operationId": "createOrder",
+      "method": "POST",
+      "path": "/orders",
+      "requestBody": {
+        "schema": { "$ref": "schema:CreateOrderRequest" }
+      },
+      "responses": [
+        {
+          "statusCode": 201,
+          "schema": { "$ref": "schema:Order" }
+        }
+      ]
+    },
+    {
+      "operationId": "getOrder",
+      "method": "GET",
+      "path": "/orders/{id}",
+      "responses": [
+        {
+          "statusCode": 200,
+          "schema": { "$ref": "schema:Order" }
+        },
+        {
+          "statusCode": 404
+        }
+      ]
+    }
+  ]
+}

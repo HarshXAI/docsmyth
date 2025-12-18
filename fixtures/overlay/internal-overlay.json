@@ -1,0 +1,22 @@
+{
+  "irOverlayVersion": "0.1",
+  "name": "internal",
+  "description": "Internal API overlay - full access with internal server URLs for development and ops teams",
+  "serverOverrides": [
+    {
+      "pattern": "https://api.example.com",
+      "replacement": "https://internal.api.example.com"
+    }
+  ],
+  "schemaRedactions": [
+    {
+      "schemaId": "User",
+      "fields": ["passwordHash"],
+      "reason": "Never expose password hashes even internally"
+    }
+  ],
+  "extensions": {
+    "x-audience": "internal",
+    "x-access-level": "ops"
+  }
+}

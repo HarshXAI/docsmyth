@@ -1,0 +1,166 @@
+{
+  "irVersion": "0.1",
+  "service": {
+    "name": "test-api",
+    "version": "1.0.0",
+    "description": "BC001: Endpoint removed - DELETE /users/{id} is missing"
+  },
+  "schemas": {
+    "CreateUserRequest": {
+      "$id": "CreateUserRequest",
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "email": {
+          "type": "string"
+        },
+        "age": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 150
+        },
+        "role": {
+          "type": "string",
+          "enum": ["admin", "user", "guest"]
+        }
+      }
+    },
+    "UserResponse": {
+      "$id": "UserResponse",
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "ErrorResponse": {
+      "$id": "ErrorResponse",
+      "type": "object",
+      "required": ["code", "message"],
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "operations": [
+    {
+      "operationId": "createUser",
+      "method": "POST",
+      "path": "/users",
+      "summary": "Create a new user",
+      "description": "Creates a new user account",
+      "tags": ["users"],
+      "requestBody": {
+        "required": true,
+        "contentType": "application/json",
+        "schema": {
+          "$ref": "schema:CreateUserRequest"
+        }
+      },
+      "responses": [
+        {
+          "statusCode": 201,
+          "description": "User created successfully",
+          "contentType": "application/json",
+          "schema": {
+            "$ref": "schema:UserResponse"
+          }
+        },
+        {
+          "statusCode": 400,
+          "description": "Bad request",
+          "contentType": "application/json",
+          "schema": {
+            "$ref": "schema:ErrorResponse"
+          }
+        }
+      ]
+    },
+    {
+      "operationId": "getUser",
+      "method": "GET",
+      "path": "/users/{id}",
+      "summary": "Get user by ID",
+      "tags": ["users"],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": [
+        {
+          "statusCode": 200,
+          "description": "User found",
+          "contentType": "application/json",
+          "schema": {
+            "$ref": "schema:UserResponse"
+          }
+        },
+        {
+          "statusCode": 404,
+          "description": "User not found",
+          "contentType": "application/json",
+          "schema": {
+            "$ref": "schema:ErrorResponse"
+          }
+        }
+      ]
+    },
+    {
+      "operationId": "listUsers",
+      "method": "GET",
+      "path": "/users",
+      "summary": "List all users",
+      "tags": ["users"],
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "responses": [
+        {
+          "statusCode": 200,
+          "description": "Users list",
+          "contentType": "application/json",
+          "schema": {
+            "type": "array",
+            "items": {
+              "$ref": "schema:UserResponse"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

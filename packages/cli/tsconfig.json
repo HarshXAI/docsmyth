@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "tsBuildInfoFile": "./dist/.tsbuildinfo"
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts"],
+  "references": [
+    { "path": "../ir-spec" },
+    { "path": "../compiler-openapi" },
+    { "path": "../evidence-sdk" },
+    { "path": "../linter" },
+    { "path": "../capture-proxy" }
+  ]
+}

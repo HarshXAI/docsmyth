@@ -1,0 +1,16 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./packages/ir-spec" },
+    { "path": "./packages/ir-sdk" },
+    { "path": "./packages/compiler-openapi" },
+    { "path": "./packages/linter" },
+    { "path": "./packages/path-matcher" },
+    { "path": "./packages/evidence-sdk" },
+    { "path": "./packages/hub-client" },
+    { "path": "./packages/runtime-node-express" },
+    { "path": "./packages/capture-proxy" },
+    { "path": "./packages/cli" },
+    { "path": "./examples/express-zod" }
+  ]
+}

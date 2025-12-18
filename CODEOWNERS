@@ -1,0 +1,27 @@
+# CODEOWNERS
+
+# See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owners for everything in the repo
+
+- @api-contract-platform/maintainers
+
+# Package-specific ownership
+
+/packages/ir-spec/ @api-contract-platform/ir-team
+/packages/ir-sdk/ @api-contract-platform/ir-team
+/packages/compiler-openapi/ @api-contract-platform/compiler-team
+/packages/cli/ @api-contract-platform/cli-team
+
+# Documentation
+
+/docs/ @api-contract-platform/docs-team
+/docs/rfcs/ @api-contract-platform/maintainers
+
+# CI/CD configuration
+
+/.github/ @api-contract-platform/platform-team
+
+# Examples
+
+/examples/ @api-contract-platform/devrel-team

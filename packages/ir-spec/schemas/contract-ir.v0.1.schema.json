@@ -1,0 +1,119 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://api-contract-platform.dev/schemas/contract-ir/v0.1.json",
+  "title": "Contract IR v0.1",
+  "description": "Schema for Contract Intermediate Representation v0.1",
+  "type": "object",
+  "required": ["irVersion", "service", "schemas", "operations"],
+  "properties": {
+    "irVersion": {
+      "type": "string",
+      "const": "0.1",
+      "description": "IR format version"
+    },
+    "service": {
+      "$ref": "#/$defs/ServiceInfo"
+    },
+    "schemas": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonSchemaObject"
+      }
+    },
+    "operations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/HttpOperation"
+      }
+    },
+    "securitySchemes": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/SecurityScheme"
+      }
+    },
+    "security": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/SecurityRequirement"
+      }
+    },
+    "extensions": {
+      "type": "object"
+    }
+  },
+  "$defs": {
+    "ServiceInfo": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "string" },
+        "description": { "type": "string" },
+        "baseUrls": {
+          "type": "array",
+          "items": { "type": "string", "format": "uri" }
+        }
+      }
+    },
+    "JsonSchemaObject": {
+      "type": "object",
+      "description": "JSON Schema-like object (simplified for v0.1)"
+    },
+    "HttpOperation": {
+      "type": "object",
+      "required": ["operationId", "method", "path", "responses"],
+      "properties": {
+        "operationId": { "type": "string" },
+        "method": {
+          "type": "string",
+          "enum": ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"]
+        },
+        "path": { "type": "string" },
+        "summary": { "type": "string" },
+        "description": { "type": "string" },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "responses": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/HttpResponse"
+          }
+        }
+      }
+    },
+    "HttpResponse": {
+      "type": "object",
+      "required": ["statusCode"],
+      "properties": {
+        "statusCode": { "type": "integer" },
+        "description": { "type": "string" },
+        "contentType": { "type": "string" },
+        "schema": {}
+      }
+    },
+    "SecurityScheme": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["apiKey", "http", "oauth2", "openIdConnect"]
+        }
+      }
+    },
+    "SecurityRequirement": {
+      "type": "object",
+      "required": ["scheme"],
+      "properties": {
+        "scheme": { "type": "string" },
+        "scopes": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  }
+}

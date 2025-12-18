@@ -1,0 +1,93 @@
+{
+  "irVersion": "0.1",
+  "service": {
+    "name": "mutual-recursion-test",
+    "version": "1.0.0"
+  },
+  "schemas": {
+    "Person": {
+      "$id": "Person",
+      "type": "object",
+      "description": "A person who works for a company",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "employer": {
+          "$ref": "schema:Company"
+        }
+      },
+      "required": ["id", "name"]
+    },
+    "Company": {
+      "$id": "Company",
+      "type": "object",
+      "description": "A company that employs people",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "employees": {
+          "type": "array",
+          "items": {
+            "$ref": "schema:Person"
+          }
+        },
+        "ceo": {
+          "$ref": "schema:Person"
+        }
+      },
+      "required": ["id", "name"]
+    }
+  },
+  "operations": [
+    {
+      "operationId": "getPerson",
+      "method": "GET",
+      "path": "/people/{id}",
+      "summary": "Get a person with their employer",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "string" }
+        }
+      ],
+      "responses": [
+        {
+          "statusCode": 200,
+          "description": "Person details",
+          "schema": { "$ref": "schema:Person" }
+        }
+      ]
+    },
+    {
+      "operationId": "getCompany",
+      "method": "GET",
+      "path": "/companies/{id}",
+      "summary": "Get a company with employees",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "string" }
+        }
+      ],
+      "responses": [
+        {
+          "statusCode": 200,
+          "description": "Company details",
+          "schema": { "$ref": "schema:Company" }
+        }
+      ]
+    }
+  ]
+}

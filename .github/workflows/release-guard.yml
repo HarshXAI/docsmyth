@@ -1,0 +1,136 @@
+name: Release Guard
+
+on:
+  # Run on version tags
+  push:
+    tags:
+      - 'v*'
+
+  # Run on PRs touching core packages
+  pull_request:
+    branches: [main]
+    paths:
+      - 'packages/**'
+      - 'apps/**'
+      - 'scripts/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'turbo.json'
+      - 'tsconfig*.json'
+
+  # Allow manual trigger for debugging
+  workflow_dispatch:
+
+concurrency:
+  group: release-guard-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  release-guard:
+    name: Release Guard (${{ matrix.os }}, Node ${{ matrix.node-version }})
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        node-version: [20, 22]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Full history for changeset detection
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Cache turbo build cache for faster builds
+      - name: Cache turbo build
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-${{ matrix.os }}-node${{ matrix.node-version }}-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ matrix.os }}-node${{ matrix.node-version }}-
+
+      # Cache smoke-pack npm cache for external dependencies
+      - name: Cache smoke-pack npm cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.acp-smoke-npm-cache
+          key: smoke-npm-cache-${{ matrix.os }}-node${{ matrix.node-version }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            smoke-npm-cache-${{ matrix.os }}-node${{ matrix.node-version }}-
+
+      - name: Run release guard
+        run: bash scripts/release-guard.sh
+        env:
+          CI: true
+
+      # On failure, provide comprehensive debugging hints
+      - name: Debug info on failure
+        if: failure()
+        run: |
+          echo "============================================"
+          echo "  RELEASE GUARD FAILURE DEBUG INFO"
+          echo "============================================"
+          echo ""
+          echo "=== System Info ==="
+          echo "Node version: $(node --version)"
+          echo "npm version: $(npm --version)"
+          echo "pnpm version: $(pnpm --version)"
+          echo "OS: ${{ matrix.os }}"
+          echo ""
+          echo "=== npm config ==="
+          npm config list
+          echo ""
+          echo "=== Environment variables (filtered) ==="
+          env | grep -E '^(NODE|NPM|CI|HOME|PATH|RUNNER)' | sort || true
+          echo ""
+          echo "=== Workspace packages ==="
+          pnpm list -r --depth 0 || true
+          echo ""
+          echo "=== Recent git history ==="
+          git log --oneline -10 || true
+          echo ""
+          echo "=== Disk usage ==="
+          df -h . || true
+          echo ""
+          echo "=== Turbo cache info ==="
+          ls -la .turbo 2>/dev/null || echo "No .turbo directory"
+          echo ""
+          echo "For more troubleshooting, see: docs/ci-failure-playbook.md"
+
+  # Summary job that runs after all matrix jobs
+  release-guard-summary:
+    name: Release Guard Summary
+    runs-on: ubuntu-latest
+    needs: release-guard
+    if: always()
+
+    steps:
+      - name: Check release guard results
+        run: |
+          if [[ "${{ needs.release-guard.result }}" == "success" ]]; then
+            echo "✅ All release guard checks passed!"
+            echo ""
+            echo "This commit is safe for release."
+          else
+            echo "❌ Release guard checks failed!"
+            echo ""
+            echo "Please review the failed jobs above and fix any issues."
+            echo "See docs/ci-failure-playbook.md for troubleshooting."
+            exit 1
+          fi

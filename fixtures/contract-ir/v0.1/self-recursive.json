@@ -1,0 +1,69 @@
+{
+  "irVersion": "0.1",
+  "service": {
+    "name": "recursion-test",
+    "version": "1.0.0"
+  },
+  "schemas": {
+    "SelfRecursiveNode": {
+      "$id": "SelfRecursiveNode",
+      "type": "object",
+      "description": "A node that references itself (tree structure)",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "schema:SelfRecursiveNode"
+          }
+        }
+      },
+      "required": ["id"]
+    }
+  },
+  "operations": [
+    {
+      "operationId": "getTree",
+      "method": "GET",
+      "path": "/trees/{id}",
+      "summary": "Get a tree node with recursive children",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": { "type": "string" }
+        }
+      ],
+      "responses": [
+        {
+          "statusCode": 200,
+          "description": "Tree node with children",
+          "schema": { "$ref": "schema:SelfRecursiveNode" }
+        }
+      ]
+    },
+    {
+      "operationId": "createTree",
+      "method": "POST",
+      "path": "/trees",
+      "summary": "Create a new tree",
+      "requestBody": {
+        "required": true,
+        "schema": { "$ref": "schema:SelfRecursiveNode" }
+      },
+      "responses": [
+        {
+          "statusCode": 201,
+          "description": "Created tree",
+          "schema": { "$ref": "schema:SelfRecursiveNode" }
+        }
+      ]
+    }
+  ]
+}

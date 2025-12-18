@@ -1,0 +1,38 @@
+{
+  "name": "my-api-service",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Express + TypeScript API with ACP contract integration",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "dev": "ACP_EVIDENCE_ENABLED=1 tsx watch src/server.ts",
+    "start": "node dist/server.js",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf dist",
+    "contract:validate": "acp validate contract/contract.ir.json",
+    "contract:compile": "acp compile contract/contract.ir.json --out dist/openapi.json",
+    "contract:publish": "acp publish contract/contract.ir.json --service my-api-service --version $npm_package_version",
+    "evidence:verify": "acp evidence verify contract/contract.ir.json --evidence ./evidence.ndjson --coverage",
+    "generate:contract": "tsx scripts/generate-contract.ts"
+  },
+  "dependencies": {
+    "@acp/runtime-node-express": "workspace:*",
+    "@acp/ir-spec": "workspace:*",
+    "express": "^4.21.2",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@acp/cli": "workspace:*",
+    "@types/express": "^5.0.0",
+    "@types/node": "^20.10.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

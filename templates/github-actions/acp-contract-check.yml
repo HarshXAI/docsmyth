@@ -1,0 +1,617 @@
+# ACP Contract Check Workflow
+# 
+# This reusable workflow validates API contracts against changes in your service.
+# It can be used as a template or called as a reusable workflow from your CI.
+#
+# Features:
+# - Contract validation against IR schema
+# - OpenAPI compilation
+# - Breaking change detection (diff against base branch)
+# - Evidence verification
+# - Human-readable failure summaries
+#
+# Usage as template:
+#   Copy this file to your repo's .github/workflows/ directory
+#
+# Usage as reusable workflow:
+#   jobs:
+#     contract-check:
+#       uses: your-org/api-contract-platform/.github/workflows/acp-contract-check.yml@main
+#       with:
+#         contract-path: ./contract/contract.ir.json
+
+name: ACP Contract Check
+
+on:
+  workflow_call:
+    inputs:
+      contract-path:
+        description: 'Path to the contract IR JSON file'
+        required: false
+        type: string
+        default: './contract/contract.ir.json'
+      evidence-path:
+        description: 'Path to evidence NDJSON file(s) - glob pattern supported'
+        required: false
+        type: string
+        default: './evidence.ndjson'
+      hub-url:
+        description: 'URL of the ACP Hub for publishing (optional)'
+        required: false
+        type: string
+        default: ''
+      node-version:
+        description: 'Node.js version to use'
+        required: false
+        type: string
+        default: '20'
+      fail-on-breaking:
+        description: 'Whether to fail the workflow on breaking changes'
+        required: false
+        type: boolean
+        default: true
+      skip-evidence:
+        description: 'Skip evidence verification step'
+        required: false
+        type: boolean
+        default: false
+    secrets:
+      hub-token:
+        description: 'Token for ACP Hub authentication'
+        required: false
+
+  # Also allow direct triggering for testing
+  push:
+    paths:
+      - 'contract/**'
+      - 'src/**'
+      - 'evidence.ndjson'
+  pull_request:
+    paths:
+      - 'contract/**'
+      - 'src/**'
+      - 'evidence.ndjson'
+
+env:
+  # Default paths - can be overridden by workflow inputs
+  CONTRACT_PATH: ${{ inputs.contract-path || './contract/contract.ir.json' }}
+  EVIDENCE_PATH: ${{ inputs.evidence-path || './evidence.ndjson' }}
+  NODE_VERSION: ${{ inputs.node-version || '20' }}
+
+jobs:
+  validate:
+    name: Validate Contract
+    runs-on: ubuntu-latest
+    outputs:
+      contract-hash: ${{ steps.hash.outputs.hash }}
+      validation-passed: ${{ steps.validate.outputs.passed }}
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for diff against base
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install ACP CLI
+        run: pnpm add -g @acp/cli
+
+      - name: Compute contract hash
+        id: hash
+        run: |
+          HASH=$(sha256sum "$CONTRACT_PATH" | cut -d' ' -f1)
+          echo "hash=$HASH" >> $GITHUB_OUTPUT
+          echo "Contract hash: $HASH"
+
+      - name: Validate contract
+        id: validate
+        run: |
+          echo "::group::Contract Validation"
+          if acp validate "$CONTRACT_PATH"; then
+            echo "passed=true" >> $GITHUB_OUTPUT
+            echo "✅ Contract validation passed"
+          else
+            echo "passed=false" >> $GITHUB_OUTPUT
+            echo "::error::Contract validation failed"
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "📖 TROUBLESHOOTING"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo ""
+            echo "Common validation issues:"
+            echo "  1. Missing required fields in contract IR"
+            echo "  2. Invalid schema references"
+            echo "  3. Unsupported media types"
+            echo ""
+            echo "Run locally to debug:"
+            echo "  acp validate $CONTRACT_PATH --verbose"
+            echo ""
+            echo "Documentation: https://github.com/your-org/api-contract-platform/blob/main/docs/troubleshooting.md"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            exit 1
+          fi
+          echo "::endgroup::"
+
+      - name: Upload validation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-report
+          path: |
+            ${{ env.CONTRACT_PATH }}
+          retention-days: 7
+
+  compile:
+    name: Compile to OpenAPI
+    runs-on: ubuntu-latest
+    needs: validate
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install ACP CLI
+        run: pnpm add -g @acp/cli
+
+      - name: Compile to OpenAPI
+        id: compile
+        run: |
+          echo "::group::OpenAPI Compilation"
+          OUTPUT_PATH="${CONTRACT_PATH%.ir.json}.openapi.json"
+          
+          if acp compile "$CONTRACT_PATH" --format openapi --output "$OUTPUT_PATH"; then
+            echo "✅ OpenAPI compilation successful"
+            echo "output-path=$OUTPUT_PATH" >> $GITHUB_OUTPUT
+          else
+            echo "::error::OpenAPI compilation failed"
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "📖 TROUBLESHOOTING"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo ""
+            echo "Compilation issues typically indicate:"
+            echo "  1. Complex schema types not supported in OpenAPI 3.1"
+            echo "  2. Invalid operation definitions"
+            echo "  3. Missing or circular schema references"
+            echo ""
+            echo "Run locally to debug:"
+            echo "  acp compile $CONTRACT_PATH --format openapi --verbose"
+            echo ""
+            echo "Documentation: https://github.com/your-org/api-contract-platform/blob/main/docs/schema-support.md"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            exit 1
+          fi
+          echo "::endgroup::"
+
+      - name: Upload OpenAPI spec
+        uses: actions/upload-artifact@v4
+        with:
+          name: openapi-spec
+          path: |
+            ${{ steps.compile.outputs.output-path }}
+          retention-days: 30
+
+  diff:
+    name: Check Breaking Changes
+    runs-on: ubuntu-latest
+    needs: validate
+    if: github.event_name == 'pull_request'
+    
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install ACP CLI
+        run: pnpm add -g @acp/cli
+
+      - name: Get base contract
+        id: base
+        run: |
+          echo "::group::Fetching base contract"
+          BASE_BRANCH="${{ github.base_ref }}"
+          BASE_CONTRACT="/tmp/base-contract.ir.json"
+          
+          # Fetch base branch contract
+          if git show "origin/$BASE_BRANCH:$CONTRACT_PATH" > "$BASE_CONTRACT" 2>/dev/null; then
+            echo "base-path=$BASE_CONTRACT" >> $GITHUB_OUTPUT
+            echo "has-base=true" >> $GITHUB_OUTPUT
+            echo "✅ Found base contract from $BASE_BRANCH"
+          else
+            echo "has-base=false" >> $GITHUB_OUTPUT
+            echo "ℹ️ No base contract found - this appears to be a new contract"
+          fi
+          echo "::endgroup::"
+
+      - name: Diff contracts
+        id: diff
+        if: steps.base.outputs.has-base == 'true'
+        run: |
+          echo "::group::Contract Diff Analysis"
+          BASE_CONTRACT="${{ steps.base.outputs.base-path }}"
+          
+          # Run diff and capture output
+          DIFF_OUTPUT=$(acp diff "$BASE_CONTRACT" "$CONTRACT_PATH" --format json 2>&1) || true
+          echo "$DIFF_OUTPUT" > /tmp/diff-result.json
+          
+          # Check for breaking changes
+          if echo "$DIFF_OUTPUT" | grep -q '"breaking":true' || echo "$DIFF_OUTPUT" | grep -q '"severity":"breaking"'; then
+            echo "has-breaking=true" >> $GITHUB_OUTPUT
+            echo ""
+            echo "⚠️ BREAKING CHANGES DETECTED"
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "📋 BREAKING CHANGE SUMMARY"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            acp diff "$BASE_CONTRACT" "$CONTRACT_PATH" --format human || true
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "📖 NEXT STEPS"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo ""
+            echo "Breaking changes require careful consideration:"
+            echo "  1. Review if changes are intentional"
+            echo "  2. Communicate with API consumers"
+            echo "  3. Consider versioning strategy"
+            echo "  4. Update client SDKs if applicable"
+            echo ""
+            echo "If this is intentional, add '[breaking]' to your commit message"
+            echo "or set 'fail-on-breaking: false' in the workflow."
+            echo ""
+            echo "Documentation: https://github.com/your-org/api-contract-platform/blob/main/docs/release-process.md"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            
+            if [[ "${{ inputs.fail-on-breaking || 'true' }}" == "true" ]]; then
+              echo "::error::Breaking changes detected. See job output for details."
+              exit 1
+            else
+              echo "::warning::Breaking changes detected but fail-on-breaking is disabled"
+            fi
+          else
+            echo "has-breaking=false" >> $GITHUB_OUTPUT
+            echo "✅ No breaking changes detected"
+            acp diff "$BASE_CONTRACT" "$CONTRACT_PATH" --format human || true
+          fi
+          echo "::endgroup::"
+
+      - name: Upload diff report
+        if: always() && steps.base.outputs.has-base == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: diff-report
+          path: /tmp/diff-result.json
+          retention-days: 7
+
+      - name: Comment on PR
+        if: always() && steps.base.outputs.has-base == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const hasBreaking = '${{ steps.diff.outputs.has-breaking }}' === 'true';
+            const fs = require('fs');
+            
+            let diffContent = '';
+            try {
+              diffContent = fs.readFileSync('/tmp/diff-result.json', 'utf8');
+            } catch (e) {
+              diffContent = 'Unable to read diff results';
+            }
+            
+            const emoji = hasBreaking ? '⚠️' : '✅';
+            const status = hasBreaking ? 'Breaking Changes Detected' : 'No Breaking Changes';
+            
+            const body = `## ${emoji} API Contract Check: ${status}
+            
+            <details>
+            <summary>View Diff Details</summary>
+            
+            \`\`\`json
+            ${diffContent.substring(0, 3000)}${diffContent.length > 3000 ? '\n...(truncated)' : ''}
+            \`\`\`
+            
+            </details>
+            
+            ${hasBreaking ? `
+            ### Breaking Changes Require Action
+            
+            Please review the changes above and:
+            1. Confirm they are intentional
+            2. Update any affected API consumers
+            3. Consider if a new API version is needed
+            
+            📖 [Breaking Change Guidelines](https://github.com/your-org/api-contract-platform/blob/main/docs/release-process.md#breaking-changes)
+            ` : ''}
+            
+            ---
+            *Generated by ACP Contract Check*
+            `;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+
+  evidence:
+    name: Verify Evidence
+    runs-on: ubuntu-latest
+    needs: validate
+    if: ${{ !inputs.skip-evidence }}
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install ACP CLI
+        run: pnpm add -g @acp/cli
+
+      - name: Check for evidence files
+        id: check
+        run: |
+          if compgen -G "$EVIDENCE_PATH" > /dev/null 2>&1; then
+            echo "has-evidence=true" >> $GITHUB_OUTPUT
+            echo "✅ Found evidence files matching: $EVIDENCE_PATH"
+          else
+            echo "has-evidence=false" >> $GITHUB_OUTPUT
+            echo "ℹ️ No evidence files found matching: $EVIDENCE_PATH"
+            echo "::notice::No evidence files found. Run your tests with ACP_EVIDENCE_CAPTURE=true to generate evidence."
+          fi
+
+      - name: Verify evidence
+        id: verify
+        if: steps.check.outputs.has-evidence == 'true'
+        run: |
+          echo "::group::Evidence Verification"
+          
+          # Verify each evidence file
+          FAILED=false
+          for evidence_file in $EVIDENCE_PATH; do
+            echo "Verifying: $evidence_file"
+            if acp evidence verify "$evidence_file" --contract "$CONTRACT_PATH"; then
+              echo "✅ $evidence_file passed verification"
+            else
+              echo "::error::Evidence verification failed for $evidence_file"
+              FAILED=true
+            fi
+          done
+          
+          if [ "$FAILED" = true ]; then
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "📖 TROUBLESHOOTING"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo ""
+            echo "Evidence verification failures indicate:"
+            echo "  1. Runtime behavior doesn't match contract"
+            echo "  2. Missing operations in contract"
+            echo "  3. Schema mismatches between contract and implementation"
+            echo ""
+            echo "To debug locally:"
+            echo "  1. Run tests with: ACP_EVIDENCE_CAPTURE=true pnpm test"
+            echo "  2. Verify evidence: acp evidence verify $EVIDENCE_PATH --contract $CONTRACT_PATH --verbose"
+            echo "  3. Check coverage: acp evidence coverage $EVIDENCE_PATH --contract $CONTRACT_PATH"
+            echo ""
+            echo "Documentation: https://github.com/your-org/api-contract-platform/blob/main/docs/troubleshooting.md"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            exit 1
+          fi
+          
+          echo "::endgroup::"
+
+      - name: Generate coverage report
+        if: steps.check.outputs.has-evidence == 'true'
+        run: |
+          echo "::group::Coverage Report"
+          acp evidence coverage "$EVIDENCE_PATH" --contract "$CONTRACT_PATH" --format table || true
+          echo "::endgroup::"
+
+      - name: Upload evidence artifacts
+        if: steps.check.outputs.has-evidence == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: evidence
+          path: |
+            ${{ env.EVIDENCE_PATH }}
+          retention-days: 14
+
+  publish:
+    name: Publish to Hub
+    runs-on: ubuntu-latest
+    needs: [validate, compile, evidence]
+    if: |
+      always() &&
+      needs.validate.result == 'success' &&
+      needs.compile.result == 'success' &&
+      (needs.evidence.result == 'success' || needs.evidence.result == 'skipped') &&
+      inputs.hub-url != ''
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install ACP CLI
+        run: pnpm add -g @acp/cli
+
+      - name: Download OpenAPI artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: openapi-spec
+          path: /tmp/artifacts
+
+      - name: Publish to Hub
+        env:
+          ACP_HUB_URL: ${{ inputs.hub-url }}
+          ACP_HUB_TOKEN: ${{ secrets.hub-token }}
+        run: |
+          echo "::group::Publishing to Hub"
+          
+          # Find the OpenAPI file
+          OPENAPI_FILE=$(find /tmp/artifacts -name "*.openapi.json" | head -1)
+          
+          if [ -z "$OPENAPI_FILE" ]; then
+            echo "::error::OpenAPI file not found in artifacts"
+            exit 1
+          fi
+          
+          # Publish contract
+          if acp hub publish --contract "$CONTRACT_PATH" --openapi "$OPENAPI_FILE"; then
+            echo "✅ Successfully published to Hub"
+          else
+            echo "::error::Failed to publish to Hub"
+            exit 1
+          fi
+          
+          echo "::endgroup::"
+
+  summary:
+    name: Summary
+    runs-on: ubuntu-latest
+    needs: [validate, compile, diff, evidence]
+    if: always()
+    
+    steps:
+      - name: Generate Summary
+        run: |
+          echo "## 📋 ACP Contract Check Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Validation
+          if [ "${{ needs.validate.result }}" == "success" ]; then
+            echo "✅ **Validation**: Passed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Validation**: Failed" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # Compilation
+          if [ "${{ needs.compile.result }}" == "success" ]; then
+            echo "✅ **OpenAPI Compilation**: Passed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **OpenAPI Compilation**: Failed" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # Diff (only on PRs)
+          if [ "${{ needs.diff.result }}" == "skipped" ]; then
+            echo "⏭️ **Breaking Change Check**: Skipped (not a PR)" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ needs.diff.result }}" == "success" ]; then
+            echo "✅ **Breaking Change Check**: No breaking changes" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ **Breaking Change Check**: Breaking changes detected" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # Evidence
+          if [ "${{ needs.evidence.result }}" == "skipped" ]; then
+            echo "⏭️ **Evidence Verification**: Skipped" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ needs.evidence.result }}" == "success" ]; then
+            echo "✅ **Evidence Verification**: Passed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Evidence Verification**: Failed" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "*Contract Hash*: \`${{ needs.validate.outputs.contract-hash || 'N/A' }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📖 [Documentation](https://github.com/your-org/api-contract-platform/blob/main/docs/)" >> $GITHUB_STEP_SUMMARY

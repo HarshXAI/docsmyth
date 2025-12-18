@@ -1,0 +1,33 @@
+{
+  "totalOps": 3,
+  "opsWithEvidence": 3,
+  "opsMissingEvidence": 0,
+  "totalEvents": 5,
+  "validEvents": 5,
+  "invalidEvents": 0,
+  "perOp": {
+    "createOrder": {
+      "operationId": "createOrder",
+      "total": 2,
+      "byStatus": {
+        "201": 2
+      }
+    },
+    "getOrder": {
+      "operationId": "getOrder",
+      "total": 2,
+      "byStatus": {
+        "200": 1,
+        "404": 1
+      }
+    },
+    "listOrders": {
+      "operationId": "listOrders",
+      "total": 1,
+      "byStatus": {
+        "200": 1
+      }
+    }
+  },
+  "missingOps": []
+}

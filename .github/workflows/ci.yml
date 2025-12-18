@@ -1,0 +1,135 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build & Test
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20, 22]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Cache the smoke-pack npm cache for faster smoke tests
+      - name: Cache smoke-pack npm cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.acp-smoke-npm-cache
+          key: smoke-npm-cache-ubuntu-latest-node${{ matrix.node-version }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            smoke-npm-cache-ubuntu-latest-node${{ matrix.node-version }}-
+
+      - name: Check (lint, typecheck, test, build)
+        run: pnpm check
+
+      - name: Smoke test (pack and install)
+        run: pnpm smoke:pack
+
+  format-check:
+    name: Format Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check formatting
+        run: pnpm format:check
+
+  breaking-change-check:
+    name: Breaking Change Detection
+    runs-on: ubuntu-latest
+    # Only run on pull requests, not on pushes to main
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: head
+
+      - name: Checkout base branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: base
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+          cache-dependency-path: head/pnpm-lock.yaml
+
+      - name: Install dependencies (head)
+        run: pnpm install --frozen-lockfile
+        working-directory: head
+
+      - name: Build (head)
+        run: pnpm build
+        working-directory: head
+
+      # Compare contract fixtures if they exist
+      # This is a simple example - in real usage you would compare your actual contracts
+      - name: Check for breaking changes in contract fixtures
+        id: diff-check
+        run: |
+          # Check if contract fixtures exist in both base and head
+          if [ -f "base/fixtures/contract-ir/v0.1/minimal-http.json" ] && [ -f "head/fixtures/contract-ir/v0.1/minimal-http.json" ]; then
+            echo "Comparing contract fixtures..."
+            cd head
+            pnpm exec acp diff ../base/fixtures/contract-ir/v0.1/minimal-http.json fixtures/contract-ir/v0.1/minimal-http.json --format text || {
+              echo "::error::Breaking changes detected in contract fixtures!"
+              exit 1
+            }
+          else
+            echo "No contract fixtures to compare, skipping..."
+          fi
+        continue-on-error: false

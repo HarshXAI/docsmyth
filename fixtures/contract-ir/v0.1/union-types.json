@@ -1,0 +1,227 @@
+{
+  "irVersion": "0.1",
+  "service": {
+    "name": "union-types-test",
+    "version": "1.0.0",
+    "description": "Tests for oneOf/anyOf/allOf schema constructs"
+  },
+  "schemas": {
+    "Cat": {
+      "$id": "Cat",
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "enum": ["cat"] },
+        "name": { "type": "string" },
+        "meow": { "type": "boolean" }
+      },
+      "required": ["type", "name"]
+    },
+    "Dog": {
+      "$id": "Dog",
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "enum": ["dog"] },
+        "name": { "type": "string" },
+        "bark": { "type": "boolean" }
+      },
+      "required": ["type", "name"]
+    },
+    "Pet": {
+      "$id": "Pet",
+      "description": "Discriminated union of Cat or Dog",
+      "oneOf": [{ "$ref": "schema:Cat" }, { "$ref": "schema:Dog" }],
+      "discriminator": {
+        "propertyName": "type",
+        "mapping": {
+          "cat": "schema:Cat",
+          "dog": "schema:Dog"
+        }
+      }
+    },
+    "StringOrNumber": {
+      "$id": "StringOrNumber",
+      "description": "Either a string or a number",
+      "oneOf": [{ "type": "string" }, { "type": "number" }]
+    },
+    "Address": {
+      "$id": "Address",
+      "type": "object",
+      "properties": {
+        "street": { "type": "string" },
+        "city": { "type": "string" }
+      },
+      "required": ["street", "city"]
+    },
+    "ContactInfo": {
+      "$id": "ContactInfo",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "format": "email" },
+        "phone": { "type": "string" }
+      }
+    },
+    "Person": {
+      "$id": "Person",
+      "description": "Person composed from Address and ContactInfo using allOf",
+      "allOf": [
+        { "$ref": "schema:Address" },
+        { "$ref": "schema:ContactInfo" },
+        {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" }
+          },
+          "required": ["name"]
+        }
+      ]
+    },
+    "FlexibleInput": {
+      "$id": "FlexibleInput",
+      "description": "Accepts multiple formats using anyOf",
+      "anyOf": [
+        { "type": "string" },
+        { "type": "object", "properties": { "value": { "type": "string" } } },
+        { "type": "array", "items": { "type": "string" } }
+      ]
+    },
+    "NullableString": {
+      "$id": "NullableString",
+      "type": "string",
+      "nullable": true
+    },
+    "NullableObject": {
+      "$id": "NullableObject",
+      "type": "object",
+      "nullable": true,
+      "properties": {
+        "id": { "type": "string" }
+      }
+    },
+    "ArrayOfUnions": {
+      "$id": "ArrayOfUnions",
+      "type": "array",
+      "items": {
+        "oneOf": [{ "$ref": "schema:Cat" }, { "$ref": "schema:Dog" }]
+      }
+    },
+    "RecordWithUnion": {
+      "$id": "RecordWithUnion",
+      "type": "object",
+      "additionalProperties": {
+        "oneOf": [{ "type": "string" }, { "type": "number" }]
+      }
+    },
+    "OptionalUnionField": {
+      "$id": "OptionalUnionField",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "value": {
+          "oneOf": [{ "type": "string" }, { "type": "number" }, { "type": "null" }]
+        }
+      },
+      "required": ["id"]
+    },
+    "NestedUnion": {
+      "$id": "NestedUnion",
+      "type": "object",
+      "properties": {
+        "data": {
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "nested": {
+                  "anyOf": [{ "type": "string" }, { "type": "number" }]
+                }
+              }
+            },
+            { "type": "array", "items": { "type": "string" } }
+          ]
+        }
+      }
+    }
+  },
+  "operations": [
+    {
+      "operationId": "getPet",
+      "method": "GET",
+      "path": "/pets/{id}",
+      "summary": "Get a pet (discriminated union)",
+      "parameters": [
+        { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+      ],
+      "responses": [
+        { "statusCode": 200, "description": "A pet", "schema": { "$ref": "schema:Pet" } }
+      ]
+    },
+    {
+      "operationId": "createPet",
+      "method": "POST",
+      "path": "/pets",
+      "summary": "Create a pet",
+      "requestBody": {
+        "required": true,
+        "schema": { "$ref": "schema:Pet" }
+      },
+      "responses": [
+        { "statusCode": 201, "description": "Created pet", "schema": { "$ref": "schema:Pet" } }
+      ]
+    },
+    {
+      "operationId": "getPerson",
+      "method": "GET",
+      "path": "/people/{id}",
+      "summary": "Get a person (allOf composition)",
+      "parameters": [
+        { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+      ],
+      "responses": [
+        { "statusCode": 200, "description": "A person", "schema": { "$ref": "schema:Person" } }
+      ]
+    },
+    {
+      "operationId": "processFlexibleInput",
+      "method": "POST",
+      "path": "/process",
+      "summary": "Process flexible input (anyOf)",
+      "requestBody": {
+        "required": true,
+        "schema": { "$ref": "schema:FlexibleInput" }
+      },
+      "responses": [
+        {
+          "statusCode": 200,
+          "description": "Processed",
+          "schema": { "type": "object", "properties": { "success": { "type": "boolean" } } }
+        }
+      ]
+    },
+    {
+      "operationId": "getNullableValue",
+      "method": "GET",
+      "path": "/nullable",
+      "summary": "Get a nullable value",
+      "responses": [
+        {
+          "statusCode": 200,
+          "description": "Nullable string",
+          "schema": { "$ref": "schema:NullableString" }
+        }
+      ]
+    },
+    {
+      "operationId": "getPetList",
+      "method": "GET",
+      "path": "/pets",
+      "summary": "Get list of pets (array of unions)",
+      "responses": [
+        {
+          "statusCode": 200,
+          "description": "List of pets",
+          "schema": { "$ref": "schema:ArrayOfUnions" }
+        }
+      ]
+    }
+  ]
+}

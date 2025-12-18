@@ -1,0 +1,110 @@
+{
+  "irVersion": "0.1",
+  "service": {
+    "name": "deep-nesting-test",
+    "version": "1.0.0"
+  },
+  "schemas": {
+    "Level1": {
+      "$id": "Level1",
+      "type": "object",
+      "properties": {
+        "data": { "type": "string" },
+        "level2": { "$ref": "schema:Level2" }
+      }
+    },
+    "Level2": {
+      "$id": "Level2",
+      "type": "object",
+      "properties": {
+        "data": { "type": "string" },
+        "level3": { "$ref": "schema:Level3" }
+      }
+    },
+    "Level3": {
+      "$id": "Level3",
+      "type": "object",
+      "properties": {
+        "data": { "type": "string" },
+        "level4": { "$ref": "schema:Level4" }
+      }
+    },
+    "Level4": {
+      "$id": "Level4",
+      "type": "object",
+      "properties": {
+        "data": { "type": "string" },
+        "level5": { "$ref": "schema:Level5" }
+      }
+    },
+    "Level5": {
+      "$id": "Level5",
+      "type": "object",
+      "properties": {
+        "data": { "type": "string" },
+        "level6": { "$ref": "schema:Level6" }
+      }
+    },
+    "Level6": {
+      "$id": "Level6",
+      "type": "object",
+      "properties": {
+        "data": { "type": "string" },
+        "level7": { "$ref": "schema:Level7" }
+      }
+    },
+    "Level7": {
+      "$id": "Level7",
+      "type": "object",
+      "properties": {
+        "data": { "type": "string" },
+        "level8": { "$ref": "schema:Level8" }
+      }
+    },
+    "Level8": {
+      "$id": "Level8",
+      "type": "object",
+      "properties": {
+        "data": { "type": "string" },
+        "level9": { "$ref": "schema:Level9" }
+      }
+    },
+    "Level9": {
+      "$id": "Level9",
+      "type": "object",
+      "properties": {
+        "data": { "type": "string" },
+        "level10": { "$ref": "schema:Level10" }
+      }
+    },
+    "Level10": {
+      "$id": "Level10",
+      "type": "object",
+      "properties": {
+        "data": { "type": "string" },
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "created": { "type": "string", "format": "date-time" },
+            "updated": { "type": "string", "format": "date-time" }
+          }
+        }
+      }
+    }
+  },
+  "operations": [
+    {
+      "operationId": "getDeeplyNested",
+      "method": "GET",
+      "path": "/nested",
+      "summary": "Get a deeply nested structure",
+      "responses": [
+        {
+          "statusCode": 200,
+          "description": "Deeply nested data",
+          "schema": { "$ref": "schema:Level1" }
+        }
+      ]
+    }
+  ]
+}

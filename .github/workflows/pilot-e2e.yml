@@ -1,0 +1,240 @@
+# Pilot E2E Smoke Test Workflow
+#
+# This workflow runs the end-to-end pilot test to validate the full ACP workflow:
+# - Hub startup
+# - Contract publish
+# - Contract pull
+# - Round-trip integrity
+#
+# Runs on:
+# - Push to main (nightly validation)
+# - Weekly schedule
+# - Manual trigger
+# - PRs affecting core packages
+
+name: Pilot E2E
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'packages/hub/**'
+      - 'packages/cli/**'
+      - 'packages/hub-client/**'
+      - 'packages/ir-sdk/**'
+      - 'packages/compiler-openapi/**'
+      - 'scripts/pilot-e2e.ts'
+  pull_request:
+    paths:
+      - 'packages/hub/**'
+      - 'packages/cli/**'
+      - 'packages/hub-client/**'
+      - 'packages/ir-sdk/**'
+      - 'packages/compiler-openapi/**'
+      - 'scripts/pilot-e2e.ts'
+  schedule:
+    # Run weekly on Monday at 6:00 AM UTC
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+    inputs:
+      debug:
+        description: 'Enable debug logging'
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '20'
+  PNPM_VERSION: '9'
+
+jobs:
+  e2e-test:
+    name: Pilot E2E Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Setup Turbo cache
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build packages
+        run: pnpm build
+        env:
+          TURBO_TELEMETRY_DISABLED: 1
+
+      - name: Run Pilot E2E Test
+        id: e2e
+        run: |
+          echo "::group::Pilot E2E Test"
+          npx tsx scripts/pilot-e2e.ts
+          echo "::endgroup::"
+        env:
+          DEBUG: ${{ inputs.debug && '1' || '' }}
+          NODE_ENV: test
+
+      - name: Collect Debug Info on Failure
+        if: failure()
+        run: |
+          echo "::group::Debug Information"
+          echo "## System Info"
+          uname -a
+          node --version
+          pnpm --version
+          
+          echo ""
+          echo "## Package Versions"
+          pnpm ls @acp/hub @acp/cli @acp/hub-client @acp/ir-sdk || true
+          
+          echo ""
+          echo "## Disk Usage"
+          df -h
+          
+          echo ""
+          echo "## Process List (node related)"
+          ps aux | grep -i node || true
+          
+          echo ""
+          echo "## Open Ports"
+          ss -tuln 2>/dev/null || netstat -tuln 2>/dev/null || true
+          
+          echo ""
+          echo "## Temp Directory Contents"
+          ls -la /tmp/acp-pilot-e2e-* 2>/dev/null || echo "No temp directories found"
+          echo "::endgroup::"
+
+      - name: Report Success
+        if: success()
+        run: |
+          echo "## ✅ Pilot E2E Test Passed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The full ACP workflow has been validated:" >> $GITHUB_STEP_SUMMARY
+          echo "- Hub startup" >> $GITHUB_STEP_SUMMARY
+          echo "- Contract validation" >> $GITHUB_STEP_SUMMARY
+          echo "- OpenAPI compilation" >> $GITHUB_STEP_SUMMARY
+          echo "- Hub publish" >> $GITHUB_STEP_SUMMARY
+          echo "- Hub pull" >> $GITHUB_STEP_SUMMARY
+          echo "- Round-trip integrity" >> $GITHUB_STEP_SUMMARY
+
+      - name: Report Failure
+        if: failure()
+        run: |
+          echo "## ❌ Pilot E2E Test Failed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The E2E test encountered an error. Check the job logs for details." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Troubleshooting" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "1. Check if all packages built successfully" >> $GITHUB_STEP_SUMMARY
+          echo "2. Verify Hub can start on a random port" >> $GITHUB_STEP_SUMMARY
+          echo "3. Check for any port conflicts or network issues" >> $GITHUB_STEP_SUMMARY
+          echo "4. Review the test output for specific error messages" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📖 [Troubleshooting Guide](./docs/ops/troubleshooting.md)" >> $GITHUB_STEP_SUMMARY
+
+  # Matrix test across Node versions
+  e2e-matrix:
+    name: E2E Node ${{ matrix.node-version }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # Only run matrix on main branch pushes and weekly schedule
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' || github.event_name == 'schedule'
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: ['20', '22']
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-node${{ matrix.node-version }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-node${{ matrix.node-version }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build packages
+        run: pnpm build
+
+      - name: Run Pilot E2E Test
+        run: npx tsx scripts/pilot-e2e.ts
+
+  # Notify on scheduled run failures
+  notify-failure:
+    name: Notify on Failure
+    runs-on: ubuntu-latest
+    needs: [e2e-test, e2e-matrix]
+    if: failure() && github.event_name == 'schedule'
+
+    steps:
+      - name: Send Notification
+        run: |
+          echo "::warning::Weekly Pilot E2E test failed. Please investigate."
+          echo ""
+          echo "Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          # Add your notification mechanism here (Slack webhook, email, etc.)
+          # Example:
+          # curl -X POST -H 'Content-type: application/json' \
+          #   --data '{"text":"⚠️ Weekly Pilot E2E test failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"}' \
+          #   ${{ secrets.SLACK_WEBHOOK_URL }}

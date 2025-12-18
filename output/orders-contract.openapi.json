@@ -1,0 +1,162 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "orders-api",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/orders": {
+      "get": {
+        "operationId": "listOrders",
+        "responses": {
+          "200": {
+            "description": "Response for status 200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Order"
+                  }
+                },
+                "examples": {
+                  "example-1": {
+                    "value": [
+                      {
+                        "id": "ord-001",
+                        "customerId": "cust-123",
+                        "total": 99.99
+                      },
+                      {
+                        "id": "ord-002",
+                        "customerId": "cust-456",
+                        "total": 149.5
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createOrder",
+        "responses": {
+          "201": {
+            "description": "Response for status 201",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "id": "ord-003",
+                      "customerId": "cust-789",
+                      "total": 75
+                    }
+                  },
+                  "example-2": {
+                    "value": {
+                      "id": "ord-004",
+                      "customerId": "cust-111",
+                      "total": 25
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrderRequest"
+              },
+              "examples": {
+                "example-1": {
+                  "value": {
+                    "customerId": "cust-789",
+                    "items": ["item-a", "item-b"]
+                  }
+                },
+                "example-2": {
+                  "value": {
+                    "customerId": "cust-111",
+                    "items": ["item-c"]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/{id}": {
+      "get": {
+        "operationId": "getOrder",
+        "responses": {
+          "200": {
+            "description": "Response for status 200",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "id": "ord-001",
+                      "customerId": "cust-123",
+                      "total": 99.99
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Response for status 404"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreateOrderRequest": {
+        "type": "object",
+        "required": ["customerId", "items"],
+        "properties": {
+          "customerId": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Order": {
+        "type": "object",
+        "required": ["id", "customerId"],
+        "properties": {
+          "customerId": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "total": {
+            "type": "number"
+          }
+        }
+      }
+    }
+  }
+}

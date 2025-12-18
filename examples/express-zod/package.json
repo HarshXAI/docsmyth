@@ -1,0 +1,25 @@
+{
+  "name": "@acp/express-zod-example",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Example Express + Zod application for contract extraction",
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
+    "clean": "rm -rf dist *.tsbuildinfo",
+    "start": "node dist/index.js",
+    "dev": "node --loader ts-node/esm src/index.ts"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "vitest": "^2.1.8"
+  }
+}

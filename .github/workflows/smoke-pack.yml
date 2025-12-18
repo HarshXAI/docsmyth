@@ -1,0 +1,86 @@
+name: Smoke Pack
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  # Allow manual trigger for debugging
+  workflow_dispatch:
+
+concurrency:
+  group: smoke-pack-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke-pack:
+    name: Smoke Pack (${{ matrix.os }}, Node ${{ matrix.node-version }})
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        node-version: [20, 22]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Cache the warm smoke-pack npm cache for faster CI runs.
+      # This is separate from pnpm store cache - it's npm's cache used for external deps
+      # during the isolated smoke test installation.
+      # Key includes OS + Node version since npm cache format may differ.
+      - name: Cache smoke-pack npm cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.acp-smoke-npm-cache
+          key: smoke-npm-cache-${{ matrix.os }}-node${{ matrix.node-version }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            smoke-npm-cache-${{ matrix.os }}-node${{ matrix.node-version }}-
+
+      # Cache turbo build cache for faster builds
+      - name: Cache turbo build
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-${{ matrix.os }}-node${{ matrix.node-version }}-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ matrix.os }}-node${{ matrix.node-version }}-
+
+      - name: Run smoke:pack
+        run: pnpm smoke:pack
+        env:
+          # Use the warm cache (default behavior)
+          # Do NOT set ACP_SMOKE_ISOLATED_CACHE=1 here - that would cause cold cache
+          # every run and make timing thresholds meaningless
+          CI: true
+
+      # On failure, provide debugging hints
+      - name: Debug info on failure
+        if: failure()
+        run: |
+          echo "=== Debugging smoke:pack failure ==="
+          echo ""
+          echo "Node version: $(node --version)"
+          echo "npm version: $(npm --version)"
+          echo "pnpm version: $(pnpm --version)"
+          echo ""
+          echo "Cache directory status:"
+          ls -la ~/.acp-smoke-npm-cache 2>/dev/null || echo "Cache directory does not exist"
+          echo ""
+          echo "See docs/smoke-pack.md for debugging guidance."

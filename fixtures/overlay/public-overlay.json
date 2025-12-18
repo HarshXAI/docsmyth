@@ -1,0 +1,68 @@
+{
+  "irOverlayVersion": "0.1",
+  "name": "public",
+  "description": "Public API overlay - hides internal endpoints and sensitive fields for external documentation",
+  "hideOperations": [
+    {
+      "operationId": "getInternalMetrics",
+      "reason": "Internal monitoring endpoint"
+    },
+    {
+      "operationId": "adminDeleteUser",
+      "reason": "Admin-only operation"
+    },
+    {
+      "method": "GET",
+      "path": "/internal/*",
+      "reason": "All internal paths hidden from public docs"
+    },
+    {
+      "method": "POST",
+      "path": "/admin/users",
+      "reason": "Admin user creation"
+    }
+  ],
+  "serverOverrides": [
+    {
+      "pattern": "https://internal.api.example.com",
+      "replacement": "https://api.example.com"
+    },
+    {
+      "pattern": "http://localhost:\\d+",
+      "replacement": "https://api.example.com",
+      "isRegex": true
+    }
+  ],
+  "schemaRedactions": [
+    {
+      "schemaId": "User",
+      "fields": ["internalId", "passwordHash", "adminNotes"],
+      "reason": "Sensitive user fields"
+    },
+    {
+      "schemaId": "Order",
+      "fields": ["internalStatus", "processingNotes", "costBreakdown.margin"],
+      "reason": "Internal order tracking fields"
+    }
+  ],
+  "responseRedactions": [
+    {
+      "operationId": "getUser",
+      "fields": ["metadata.createdBy", "metadata.lastModifiedBy"],
+      "reason": "Internal audit fields"
+    },
+    {
+      "operationId": "listOrders",
+      "statusCode": 200,
+      "fields": ["items[].internalScore"],
+      "reason": "Internal scoring data"
+    }
+  ],
+  "requestRedactions": [
+    {
+      "operationId": "createOrder",
+      "fields": ["internalPriority", "bypassValidation"],
+      "reason": "Internal-only request fields"
+    }
+  ]
+}
