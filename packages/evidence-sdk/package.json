@@ -1,6 +1,6 @@
 {
   "name": "@docsmyth/evidence-sdk",
-  "version": "0.1.1-rc.2",
+  "version": "0.1.1-rc.5",
   "description": "API Contract Platform Evidence SDK - Capture and verify API evidence",
   "type": "module",
   "license": "MIT",

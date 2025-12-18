@@ -1,6 +1,6 @@
 {
   "name": "@docsmyth/runtime-node-express",
-  "version": "0.1.1-rc.2",
+  "version": "0.1.1-rc.5",
   "description": "API Contract Platform Express Runtime - Middleware for evidence capture in Express apps",
   "type": "module",
   "license": "MIT",
@@ -39,8 +39,8 @@
     "clean": "rm -rf dist *.tsbuildinfo"
   },
   "dependencies": {
-    "@docsmyth/ir-spec": "workspace:*",
     "@docsmyth/evidence-sdk": "workspace:*",
+    "@docsmyth/ir-spec": "workspace:*",
     "@docsmyth/path-matcher": "workspace:*"
   },
   "devDependencies": {

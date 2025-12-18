@@ -1,6 +1,6 @@
 {
   "name": "@docsmyth/ir-sdk",
-  "version": "0.1.1-rc.2",
+  "version": "0.1.1-rc.5",
   "description": "API Contract Platform IR SDK - TypeScript SDK for Contract IR",
   "type": "module",
   "license": "MIT",

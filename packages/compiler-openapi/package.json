@@ -1,6 +1,6 @@
 {
   "name": "@docsmyth/compiler-openapi",
-  "version": "0.1.1-rc.2",
+  "version": "0.1.1-rc.5",
   "description": "API Contract Platform OpenAPI Compiler - Compile Contract IR to OpenAPI",
   "type": "module",
   "license": "MIT",

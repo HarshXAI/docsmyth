@@ -1,6 +1,6 @@
 {
   "name": "@docsmyth/cli",
-  "version": "0.1.1-rc.2",
+  "version": "0.1.1-rc.5",
   "description": "API Contract Platform CLI - Manage and compile API contracts",
   "type": "module",
   "license": "MIT",
@@ -43,12 +43,12 @@
     "prepack": "pnpm -w turbo run build --filter=@docsmyth/cli..."
   },
   "dependencies": {
-    "@docsmyth/ir-spec": "workspace:*",
-    "@docsmyth/ir-sdk": "workspace:*",
+    "@docsmyth/capture-proxy": "workspace:*",
     "@docsmyth/compiler-openapi": "workspace:*",
     "@docsmyth/evidence-sdk": "workspace:*",
+    "@docsmyth/ir-sdk": "workspace:*",
+    "@docsmyth/ir-spec": "workspace:*",
     "@docsmyth/linter": "workspace:*",
-    "@docsmyth/capture-proxy": "workspace:*",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "commander": "^12.1.0"

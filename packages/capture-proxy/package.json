@@ -1,6 +1,6 @@
 {
   "name": "@docsmyth/capture-proxy",
-  "version": "0.1.1-rc.2",
+  "version": "0.1.1-rc.5",
   "description": "API Contract Platform Capture Proxy - Language-agnostic HTTP sidecar for evidence capture",
   "type": "module",
   "license": "MIT",
@@ -39,9 +39,9 @@
     "clean": "rm -rf dist *.tsbuildinfo"
   },
   "dependencies": {
-    "@docsmyth/ir-spec": "workspace:*",
     "@docsmyth/evidence-sdk": "workspace:*",
     "@docsmyth/hub-client": "workspace:*",
+    "@docsmyth/ir-spec": "workspace:*",
     "@docsmyth/path-matcher": "workspace:*",
     "http-proxy": "^1.18.1"
   },
