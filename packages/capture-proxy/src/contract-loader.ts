@@ -4,9 +4,9 @@
 
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import type { ContractIR } from '@acp/ir-spec';
-import { validate, type ValidationResult } from '@acp/ir-spec';
-import { HubClient, HubNotFoundError } from '@acp/hub-client';
+import type { ContractIR } from '@docsmyth/ir-spec';
+import { validate, type ValidationResult } from '@docsmyth/ir-spec';
+import { HubClient, HubNotFoundError } from '@docsmyth/hub-client';
 import type { Logger } from './logger.js';
 
 /**

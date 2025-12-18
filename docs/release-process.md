@@ -143,7 +143,7 @@ After publishing, version tags are created automatically:
 
 ```
 v0.1.0        # Main version tag
-@acp/cli@0.1.0 # Package-specific tags
+@docsmyth/cli@0.1.0 # Package-specific tags
 ```
 
 ## Hotfix Process
@@ -173,29 +173,29 @@ For urgent fixes to a released version:
 The release order is determined by package dependencies:
 
 ```
-@acp/ir-spec          # Base types, no dependencies
+@docsmyth/ir-spec          # Base types, no dependencies
     ↓
-@acp/ir-sdk           # Depends on ir-spec
-@acp/compiler-openapi # Depends on ir-spec
-@acp/evidence-sdk     # Depends on ir-spec
-@acp/linter           # Depends on ir-spec
+@docsmyth/ir-sdk           # Depends on ir-spec
+@docsmyth/compiler-openapi # Depends on ir-spec
+@docsmyth/evidence-sdk     # Depends on ir-spec
+@docsmyth/linter           # Depends on ir-spec
     ↓
-@acp/hub              # Depends on ir-spec, compiler-openapi
-@acp/hub-client       # Depends on ir-spec
+@docsmyth/hub              # Depends on ir-spec, compiler-openapi
+@docsmyth/hub-client       # Depends on ir-spec
     ↓
-@acp/runtime-node-express  # Depends on ir-spec, evidence-sdk
-@acp/capture-proxy         # Depends on evidence-sdk
+@docsmyth/runtime-node-express  # Depends on ir-spec, evidence-sdk
+@docsmyth/capture-proxy         # Depends on evidence-sdk
     ↓
-@acp/cli              # Depends on most packages
+@docsmyth/cli              # Depends on most packages
     ↓
-@acp/ui-portal        # Depends on hub-client, ir-spec
+@docsmyth/ui-portal        # Depends on hub-client, ir-spec
 ```
 
 Changesets handles this automatically by publishing in dependency order.
 
 ## npm Scope
 
-All packages are published under the `@acp` scope:
+All packages are published under the `@docsmyth` scope:
 
 - Scope must be configured in npm org settings
 - Maintainers need write access to the scope
@@ -252,5 +252,5 @@ After a release:
 
 1. Verify packages on npmjs.com
 2. Check GitHub releases are created
-3. Test installation: `npx @acp/cli --version`
+3. Test installation: `npx @docsmyth/cli --version`
 4. Monitor for issues in GitHub Issues

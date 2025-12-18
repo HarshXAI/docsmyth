@@ -6,13 +6,13 @@ This document describes data retention policies, storage management, and cleanup
 
 ACP manages several types of data with different retention requirements:
 
-| Data Type | Location | Default Retention | Configurable |
-|-----------|----------|-------------------|--------------|
-| Evidence files | Local filesystem | Until deleted | Yes |
-| CI artifacts | GitHub Actions | 7-30 days | Yes |
-| Hub contracts | ACP Hub | Indefinite | Per org |
-| Hub evidence | ACP Hub | 90 days | Per org |
-| Audit logs | ACP Hub | 90 days | Per org |
+| Data Type      | Location         | Default Retention | Configurable |
+| -------------- | ---------------- | ----------------- | ------------ |
+| Evidence files | Local filesystem | Until deleted     | Yes          |
+| CI artifacts   | GitHub Actions   | 7-30 days         | Yes          |
+| Hub contracts  | ACP Hub          | Indefinite        | Per org      |
+| Hub evidence   | ACP Hub          | 90 days           | Per org      |
+| Audit logs     | ACP Hub          | 90 days           | Per org      |
 
 ## Evidence Files
 
@@ -31,11 +31,11 @@ Evidence files are written as NDJSON (newline-delimited JSON) to the local files
 ```typescript
 // From packages/evidence-sdk/src/streaming-writer.ts
 export const DEFAULT_LIMITS = {
-  maxFileBytes: 100 * 1024 * 1024,     // 100 MB per file
-  maxEventsPerRun: 0,                   // Unlimited per run
-  maxEventsPerOperation: 1000,          // 1000 per operation
-  maxEventsPerSecond: 100,              // 100 events/second
-  dedupeWindowMs: 60000,                // 60 second dedupe window
+  maxFileBytes: 100 * 1024 * 1024, // 100 MB per file
+  maxEventsPerRun: 0, // Unlimited per run
+  maxEventsPerOperation: 1000, // 1000 per operation
+  maxEventsPerSecond: 100, // 100 events/second
+  dedupeWindowMs: 60000, // 60 second dedupe window
 };
 ```
 
@@ -108,12 +108,12 @@ console.log(`Rate limited events: ${stats.rateLimitedEvents}`);
 
 Default retention times in ACP workflows:
 
-| Artifact | Retention | Reason |
-|----------|-----------|--------|
-| Validation reports | 7 days | Debug recent failures |
-| OpenAPI specs | 30 days | Download for tooling |
-| Evidence files | 14 days | Verify recent runs |
-| Diff reports | 7 days | Review breaking changes |
+| Artifact           | Retention | Reason                  |
+| ------------------ | --------- | ----------------------- |
+| Validation reports | 7 days    | Debug recent failures   |
+| OpenAPI specs      | 30 days   | Download for tooling    |
+| Evidence files     | 14 days   | Verify recent runs      |
+| Diff reports       | 7 days    | Review breaking changes |
 
 **Override in workflow:**
 
@@ -122,7 +122,7 @@ Default retention times in ACP workflows:
   with:
     name: evidence
     path: evidence.ndjson
-    retention-days: 3  # Reduce to 3 days
+    retention-days: 3 # Reduce to 3 days
 ```
 
 ### Storage Costs
@@ -158,6 +158,7 @@ orders-api/
 ```
 
 **Version retention:**
+
 - `latest` tag always points to most recent
 - All versions are retained indefinitely by default
 - Admins can delete old versions via Hub UI
@@ -169,6 +170,7 @@ Evidence uploaded to the Hub for verification:
 **Default retention: 90 days**
 
 After 90 days:
+
 - Evidence is automatically deleted
 - Verification results remain (pass/fail status)
 - Coverage metrics are preserved
@@ -178,7 +180,7 @@ After 90 days:
 ```yaml
 # hub-config.yaml
 evidence:
-  retentionDays: 30  # Shorter retention
+  retentionDays: 30 # Shorter retention
   maxSizePerContract: 500MB
 ```
 
@@ -286,13 +288,13 @@ find . -name "*.ndjson" -mtime +7 -delete
 
 ```bash
 # List old contracts
-acp hub list --before 2024-01-01
+docsmyth hub list --before 2024-01-01
 
 # Delete specific version
-acp hub delete orders-api --version 0.9.0
+docsmyth hub delete orders-api --version 0.9.0
 
 # Prune evidence (90+ days old)
-acp hub admin prune-evidence
+docsmyth hub admin prune-evidence
 ```
 
 ### CI Cleanup
@@ -324,11 +326,11 @@ The Hub UI provides storage metrics:
 
 ### Recommended Alerts
 
-| Metric | Warning | Critical |
-|--------|---------|----------|
-| Local evidence size | > 500 MB | > 1 GB |
-| Hub storage per org | > 5 GB | > 10 GB |
-| Audit log size | > 1 GB | > 2 GB |
+| Metric              | Warning    | Critical    |
+| ------------------- | ---------- | ----------- |
+| Local evidence size | > 500 MB   | > 1 GB      |
+| Hub storage per org | > 5 GB     | > 10 GB     |
+| Audit log size      | > 1 GB     | > 2 GB      |
 | Rate limited events | > 100/hour | > 1000/hour |
 
 ## Best Practices

@@ -6,8 +6,8 @@
  */
 
 import type { Request, Response, NextFunction, RequestHandler } from 'express';
-import type { ContractIR, HttpOperation } from '@acp/ir-spec';
-import { sanitize, type SanitizeConfig, type EvidenceEvent } from '@acp/evidence-sdk';
+import type { ContractIR, HttpOperation } from '@docsmyth/ir-spec';
+import { sanitize, type SanitizeConfig, type EvidenceEvent } from '@docsmyth/evidence-sdk';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { matchPath, normalizePath } from './path-matcher.js';
@@ -228,7 +228,7 @@ function extractHeaders(
  * @example
  * ```ts
  * import express from 'express';
- * import { evidenceCapture } from '@acp/runtime-node-express';
+ * import { evidenceCapture } from '@docsmyth/runtime-node-express';
  *
  * const app = express();
  *

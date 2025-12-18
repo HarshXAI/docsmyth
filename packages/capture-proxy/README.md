@@ -1,13 +1,13 @@
-# @acp/capture-proxy
+# @docsmyth/capture-proxy
 
 Language-agnostic HTTP sidecar proxy for evidence capture. Works with any HTTP service behind it and emits evidence events mapped to Contract IR operationIds.
 
 ## Installation
 
 ```bash
-npm install @acp/capture-proxy
+npm install @docsmyth/capture-proxy
 # or
-pnpm add @acp/capture-proxy
+pnpm add @docsmyth/capture-proxy
 ```
 
 ## Features
@@ -26,17 +26,17 @@ The proxy can be started via the ACP CLI:
 
 ```bash
 # Using a local contract file
-acp proxy --target http://localhost:3000 --contract ./contract-ir.json --capture
+docsmyth proxy --target http://localhost:3000 --contract ./contract-ir.json --capture
 
 # Using a contract from the Hub
-acp proxy --target http://localhost:3000 \
+docsmyth proxy --target http://localhost:3000 \
   --hub-url http://hub.example.com \
   --service my-api \
   --version latest \
   --capture
 
 # Full options
-acp proxy \
+docsmyth proxy \
   --listen 0.0.0.0:8080 \
   --target http://localhost:3000 \
   --contract ./contract-ir.json \
@@ -67,7 +67,7 @@ All CLI options can be set via environment variables:
 ## Programmatic Usage
 
 ```typescript
-import { startProxy, type ProxyConfig } from '@acp/capture-proxy';
+import { startProxy, type ProxyConfig } from '@docsmyth/capture-proxy';
 
 const config: ProxyConfig = {
   listen: '0.0.0.0:8080',
@@ -124,7 +124,7 @@ The proxy exposes a health endpoint at `/_acp/health` that returns:
 ```dockerfile
 FROM node:20-alpine
 
-RUN npm install -g @acp/cli
+RUN npm install -g @docsmyth/cli
 
 ENV ACP_PROXY_LISTEN=0.0.0.0:8080
 ENV ACP_CAPTURE=1
@@ -180,9 +180,9 @@ Evidence is emitted as NDJSON (newline-delimited JSON):
 }
 ```
 
-## Comparison with @acp/runtime-node-express
+## Comparison with @docsmyth/runtime-node-express
 
-| Feature               | @acp/capture-proxy         | @acp/runtime-node-express |
+| Feature               | @docsmyth/capture-proxy         | @docsmyth/runtime-node-express |
 | --------------------- | -------------------------- | ------------------------- |
 | Integration           | Sidecar (any language)     | Express middleware        |
 | Setup                 | Zero code changes          | Requires middleware       |

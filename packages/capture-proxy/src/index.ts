@@ -1,5 +1,5 @@
 /**
- * @acp/capture-proxy
+ * @docsmyth/capture-proxy
  *
  * Language-agnostic HTTP sidecar proxy for evidence capture.
  * Works with any HTTP service behind it and emits evidence events

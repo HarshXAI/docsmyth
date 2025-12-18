@@ -2,11 +2,11 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor, act } from '@testing-library/react';
 import { useOverlay } from '../src/hooks/useOverlay.js';
 import * as HubClientContext from '../src/context/HubClientContext.js';
-import type { ContractIR, Overlay, OverlaySummary } from '@acp/ir-spec';
-import type { OpenAPIDocument } from '@acp/hub-client';
+import type { ContractIR, Overlay, OverlaySummary } from '@docsmyth/ir-spec';
+import type { OpenAPIDocument } from '@docsmyth/hub-client';
 
 // Mock the ir-sdk module
-vi.mock('@acp/ir-sdk', () => ({
+vi.mock('@docsmyth/ir-sdk', () => ({
   applyOverlay: vi.fn((ir: ContractIR, _overlay: Overlay) => {
     const summary: OverlaySummary = {
       hiddenOperationsCount: 2,

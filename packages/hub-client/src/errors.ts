@@ -1,5 +1,5 @@
 /**
- * @acp/hub-client - Custom error types for Hub client
+ * @docsmyth/hub-client - Custom error types for Hub client
  */
 
 import type { HubErrorResponse } from './types.js';

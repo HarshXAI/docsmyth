@@ -1,4 +1,4 @@
-# @acp/ui-portal
+# @docsmyth/ui-portal
 
 Web UI for browsing API contracts, viewing diffs, and checking coverage.
 
@@ -15,7 +15,7 @@ Web UI for browsing API contracts, viewing diffs, and checking coverage.
 
 - Node.js 20+
 - pnpm 9+
-- A running instance of `@acp/hub`
+- A running instance of `@docsmyth/hub`
 
 ### Running locally
 
@@ -71,5 +71,5 @@ pnpm test
 - **Framework**: React 18 + React Router
 - **Build Tool**: Vite
 - **Styling**: Plain CSS with CSS custom properties
-- **Data Fetching**: `@acp/hub-client` with custom `useAsync` hook
-- **Diff Engine**: `@acp/linter` runs client-side for instant diffs
+- **Data Fetching**: `@docsmyth/hub-client` with custom `useAsync` hook
+- **Diff Engine**: `@docsmyth/linter` runs client-side for instant diffs

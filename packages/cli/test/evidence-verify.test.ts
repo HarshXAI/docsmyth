@@ -4,8 +4,8 @@
 
 import { describe, it, expect } from 'vitest';
 import { verifyEvidence } from '../src/commands/evidence-verify.js';
-import type { ContractIR } from '@acp/ir-spec';
-import type { EvidenceEvent } from '@acp/evidence-sdk';
+import type { ContractIR } from '@docsmyth/ir-spec';
+import type { EvidenceEvent } from '@docsmyth/evidence-sdk';
 
 const TEST_CONTRACT: ContractIR = {
   irVersion: '0.1',

@@ -1,8 +1,8 @@
 /**
- * @acp/path-matcher
+ * @docsmyth/path-matcher
  *
  * Shared path matching utilities for Contract IR path patterns.
- * Used by both @acp/runtime-node-express and @acp/capture-proxy
+ * Used by both @docsmyth/runtime-node-express and @docsmyth/capture-proxy
  * to ensure consistent path matching behavior.
  */
 

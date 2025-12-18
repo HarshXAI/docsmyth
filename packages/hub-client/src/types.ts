@@ -1,8 +1,8 @@
 /**
- * @acp/hub-client - Types for Hub API responses
+ * @docsmyth/hub-client - Types for Hub API responses
  */
 
-import type { ContractIR } from '@acp/ir-spec';
+import type { ContractIR } from '@docsmyth/ir-spec';
 
 /**
  * Metadata for a stored contract version

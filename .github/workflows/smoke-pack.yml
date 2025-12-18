@@ -48,7 +48,7 @@ jobs:
       - name: Cache smoke-pack npm cache
         uses: actions/cache@v4
         with:
-          path: ~/.acp-smoke-npm-cache
+          path: ~/.docsmyth-smoke-npm-cache
           key: smoke-npm-cache-${{ matrix.os }}-node${{ matrix.node-version }}-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
             smoke-npm-cache-${{ matrix.os }}-node${{ matrix.node-version }}-
@@ -81,6 +81,6 @@ jobs:
           echo "pnpm version: $(pnpm --version)"
           echo ""
           echo "Cache directory status:"
-          ls -la ~/.acp-smoke-npm-cache 2>/dev/null || echo "Cache directory does not exist"
+          ls -la ~/.docsmyth-smoke-npm-cache 2>/dev/null || echo "Cache directory does not exist"
           echo ""
           echo "See docs/smoke-pack.md for debugging guidance."

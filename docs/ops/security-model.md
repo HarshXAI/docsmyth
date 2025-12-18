@@ -28,15 +28,15 @@ All data passes through the sanitizer before being written to evidence files or 
 
 The following headers are **never** captured, regardless of configuration:
 
-| Header | Reason |
-|--------|--------|
+| Header          | Reason                                       |
+| --------------- | -------------------------------------------- |
 | `authorization` | Contains bearer tokens, API keys, basic auth |
-| `cookie` | Contains session tokens, CSRF tokens |
-| `set-cookie` | Response cookies with session data |
-| `x-api-key` | API authentication tokens |
-| `x-auth-token` | Custom auth tokens |
-| `x-csrf-token` | CSRF protection tokens |
-| `x-xsrf-token` | Alternative CSRF token header |
+| `cookie`        | Contains session tokens, CSRF tokens         |
+| `set-cookie`    | Response cookies with session data           |
+| `x-api-key`     | API authentication tokens                    |
+| `x-auth-token`  | Custom auth tokens                           |
+| `x-csrf-token`  | CSRF protection tokens                       |
+| `x-xsrf-token`  | Alternative CSRF token header                |
 
 These headers are stripped at the middleware level and cannot be re-enabled.
 
@@ -57,6 +57,7 @@ createEvidenceCaptureMiddleware({
 ```
 
 **Behavior:**
+
 - ✅ Removes all blocked headers
 - ✅ Masks all PII patterns (email, phone, SSN)
 - ✅ Masks all token patterns
@@ -77,6 +78,7 @@ createEvidenceCaptureMiddleware({
 ```
 
 **Behavior:**
+
 - ✅ Removes blocked headers
 - ✅ Masks common PII patterns
 - ✅ Masks bearer tokens
@@ -96,6 +98,7 @@ createEvidenceCaptureMiddleware({
 ```
 
 **Behavior:**
+
 - ✅ Removes only explicitly blocked headers
 - ⚠️ Preserves most header values
 - ⚠️ Minimal PII masking
@@ -106,6 +109,7 @@ createEvidenceCaptureMiddleware({
 Request and response bodies are scanned for sensitive fields. These fields have their values replaced with `[REDACTED]`:
 
 **Default Sensitive Fields:**
+
 - `password`
 - `secret`
 - `token`
@@ -140,13 +144,13 @@ Request and response bodies are scanned for sensitive fields. These fields have 
 
 Common PII patterns are automatically detected and masked:
 
-| Pattern | Example | Masked As |
-|---------|---------|-----------|
-| Email | `user@example.com` | `[REDACTED]` |
-| US Phone | `555-123-4567` | `[REDACTED]` |
-| US SSN | `123-45-6789` | `[REDACTED]` |
-| Bearer Token | `Bearer eyJhbG...` | `[REDACTED]` |
-| JWT | `eyJhbG...xyz.abc` | `[REDACTED]` |
+| Pattern       | Example                   | Masked As    |
+| ------------- | ------------------------- | ------------ |
+| Email         | `user@example.com`        | `[REDACTED]` |
+| US Phone      | `555-123-4567`            | `[REDACTED]` |
+| US SSN        | `123-45-6789`             | `[REDACTED]` |
+| Bearer Token  | `Bearer eyJhbG...`        | `[REDACTED]` |
+| JWT           | `eyJhbG...xyz.abc`        | `[REDACTED]` |
 | Long API Keys | `sk_live_abc123def456...` | `[REDACTED]` |
 
 ### Custom Sanitization
@@ -163,8 +167,8 @@ createEvidenceCaptureMiddleware({
     sensitiveFields: ['ssn', 'taxId', 'bankAccount'],
     // Custom patterns to mask
     maskPatterns: [
-      /ACCT-\d{12}/g,  // Account numbers
-      /MRN-\d{8}/g,    // Medical record numbers
+      /ACCT-\d{12}/g, // Account numbers
+      /MRN-\d{8}/g, // Medical record numbers
     ],
   },
 });
@@ -174,20 +178,20 @@ createEvidenceCaptureMiddleware({
 
 To prevent excessive data capture (which could indicate a security issue), ACP enforces rate limits:
 
-| Limit | Default | Purpose |
-|-------|---------|---------|
-| `maxEventsPerSecond` | 100 | Prevent runaway capture |
-| `maxEventsPerOperation` | 1000 | Limit per-endpoint capture |
-| `maxEventsPerRun` | 0 (unlimited) | Limit per test run |
-| `maxFileBytes` | 100 MB | Prevent disk exhaustion |
+| Limit                   | Default       | Purpose                    |
+| ----------------------- | ------------- | -------------------------- |
+| `maxEventsPerSecond`    | 100           | Prevent runaway capture    |
+| `maxEventsPerOperation` | 1000          | Limit per-endpoint capture |
+| `maxEventsPerRun`       | 0 (unlimited) | Limit per test run         |
+| `maxFileBytes`          | 100 MB        | Prevent disk exhaustion    |
 
 **Configuration:**
 
 ```typescript
 createEvidenceCaptureMiddleware({
   limits: {
-    maxEventsPerSecond: 50,      // More conservative
-    maxEventsPerOperation: 100,  // Fewer samples needed
+    maxEventsPerSecond: 50, // More conservative
+    maxEventsPerOperation: 100, // Fewer samples needed
   },
 });
 ```
@@ -203,23 +207,24 @@ The ACP Hub requires authentication for all write operations:
 export ACP_HUB_TOKEN="your-token-here"
 
 # Or pass directly
-acp hub publish --token "your-token-here" ...
+docsmyth hub publish --token "your-token-here" ...
 ```
 
 **Token Security:**
+
 - Tokens are never logged or captured in evidence
 - Tokens should be stored in CI secrets, not in code
 - Rotate tokens regularly (recommended: every 90 days)
 
 ### Hub Authorization
 
-| Operation | Required Permission |
-|-----------|-------------------|
-| Read contracts | None (public) or `read` (private) |
-| Publish contracts | `write` |
-| Delete contracts | `admin` |
-| Manage overlays | `write` |
-| View audit logs | `audit` |
+| Operation         | Required Permission               |
+| ----------------- | --------------------------------- |
+| Read contracts    | None (public) or `read` (private) |
+| Publish contracts | `write`                           |
+| Delete contracts  | `admin`                           |
+| Manage overlays   | `write`                           |
+| View audit logs   | `audit`                           |
 
 ## Audit Logging
 

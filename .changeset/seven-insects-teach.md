@@ -1,16 +1,16 @@
 ---
-'@acp/ui-portal': patch
-'@acp/capture-proxy': patch
-'@acp/cli': patch
-'@acp/compiler-openapi': patch
-'@acp/evidence-sdk': patch
-'@acp/hub': patch
-'@acp/hub-client': patch
-'@acp/ir-sdk': patch
-'@acp/ir-spec': patch
-'@acp/linter': patch
-'@acp/path-matcher': patch
-'@acp/runtime-node-express': patch
+'@docsmyth/ui-portal': patch
+'@docsmyth/capture-proxy': patch
+'@docsmyth/cli': patch
+'@docsmyth/compiler-openapi': patch
+'@docsmyth/evidence-sdk': patch
+'@docsmyth/hub': patch
+'@docsmyth/hub-client': patch
+'@docsmyth/ir-sdk': patch
+'@docsmyth/ir-spec': patch
+'@docsmyth/linter': patch
+'@docsmyth/path-matcher': patch
+'@docsmyth/runtime-node-express': patch
 ---
 
-fix(smoke-pack): pack transitive @acp/\* deps for CLI
+fix(smoke-pack): pack transitive @docsmyth/\* deps for CLI

@@ -298,7 +298,7 @@ async function runCommand(
 async function setupTestEnvironment(): Promise<TestContext> {
     logStep('Setting up test environment');
 
-    const tempDir = join(tmpdir(), `acp-pilot-e2e-${randomBytes(8).toString('hex')}`);
+    const tempDir = join(tmpdir(), `docsmyth-pilot-e2e-${randomBytes(8).toString('hex')}`);
     await mkdir(tempDir, { recursive: true });
     logSuccess(`Created temp directory: ${tempDir}`);
 

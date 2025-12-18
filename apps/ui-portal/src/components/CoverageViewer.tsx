@@ -1,4 +1,4 @@
-import type { CoverageReport } from '@acp/hub-client';
+import type { CoverageReport } from '@docsmyth/hub-client';
 import { EmptyState } from './EmptyState';
 
 interface CoverageViewerProps {

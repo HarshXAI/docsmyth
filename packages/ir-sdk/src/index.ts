@@ -1,5 +1,5 @@
 /**
- * @acp/ir-sdk
+ * @docsmyth/ir-sdk
  *
  * SDK for building Contract IR documents programmatically.
  * Provides type-safe builder functions for creating IR structures.
@@ -19,7 +19,7 @@ import type {
   SecurityRequirement,
   SecurityScheme,
   ServiceInfo,
-} from '@acp/ir-spec';
+} from '@docsmyth/ir-spec';
 
 /**
  * Creates a schema reference string
@@ -260,11 +260,11 @@ export type {
   ResponseRedaction,
   RequestRedaction,
   OverlaySummary,
-} from '@acp/ir-spec';
+} from '@docsmyth/ir-spec';
 
 // Re-export overlay validation
-export { validateOverlay, isOverlay, formatOverlayErrors } from '@acp/ir-spec';
-export type { OverlayValidationError, OverlayValidationResult } from '@acp/ir-spec';
+export { validateOverlay, isOverlay, formatOverlayErrors } from '@docsmyth/ir-spec';
+export type { OverlayValidationError, OverlayValidationResult } from '@docsmyth/ir-spec';
 
 // Overlay applier
 export { applyOverlay, getOverlaySummary } from './overlay-applier.js';

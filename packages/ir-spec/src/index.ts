@@ -1,5 +1,5 @@
 /**
- * @acp/ir-spec
+ * @docsmyth/ir-spec
  *
  * Contract IR (Intermediate Representation) Specification
  *

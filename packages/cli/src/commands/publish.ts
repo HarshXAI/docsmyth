@@ -7,8 +7,8 @@
 
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { validate, validateOverlay, type ContractIR, type Overlay } from '@acp/ir-spec';
-import { compileOpenApi } from '@acp/compiler-openapi';
+import { validate, validateOverlay, type ContractIR, type Overlay } from '@docsmyth/ir-spec';
+import { compileOpenApi } from '@docsmyth/compiler-openapi';
 
 export interface PublishOptions {
     hub: string;

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { validate } from '@acp/ir-spec';
+import { validate } from '@docsmyth/ir-spec';
 import {
   ref,
   makeService,
@@ -10,7 +10,7 @@ import {
   makeContractIR,
 } from '../src/index.js';
 
-describe('@acp/ir-sdk', () => {
+describe('@docsmyth/ir-sdk', () => {
   describe('ref()', () => {
     it('should create a schema reference string', () => {
       expect(ref('CreateOrderRequest')).toBe('schema:CreateOrderRequest');

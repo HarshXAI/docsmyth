@@ -1,5 +1,5 @@
 /**
- * @acp/linter - API Contract Linter
+ * @docsmyth/linter - API Contract Linter
  *
  * Breaking change detection and contract diffing for the API Contract Platform.
  */

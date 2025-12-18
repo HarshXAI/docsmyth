@@ -28,8 +28,8 @@ pnpm test
 pnpm build
 
 # Use the CLI
-pnpm acp validate fixtures/contract-ir/v0.1/minimal-http.json
-pnpm acp compile fixtures/contract-ir/v0.1/minimal-http.json --out ./output
+pnpm docsmyth validate fixtures/contract-ir/v0.1/minimal-http.json
+pnpm docsmyth compile fixtures/contract-ir/v0.1/minimal-http.json --out ./output
 ```
 
 ## Evidence Validation
@@ -69,10 +69,10 @@ api-contract-platform/
 
 | Package                 | Description                                              |
 | ----------------------- | -------------------------------------------------------- |
-| `@acp/ir-spec`          | Contract IR v0.1 TypeScript types and validation         |
-| `@acp/ir-sdk`           | Builder functions for constructing IR programmatically   |
-| `@acp/compiler-openapi` | Compiles Contract IR to OpenAPI 3.1                      |
-| `@acp/cli`              | Command-line tool (`acp`) for validation and compilation |
+| `@docsmyth/ir-spec`          | Contract IR v0.1 TypeScript types and validation         |
+| `@docsmyth/ir-sdk`           | Builder functions for constructing IR programmatically   |
+| `@docsmyth/compiler-openapi` | Compiles Contract IR to OpenAPI 3.1                      |
+| `@docsmyth/cli`              | Command-line tool (`acp`) for validation and compilation |
 
 ## Development
 
@@ -106,7 +106,7 @@ pnpm typecheck
 ### Adding a new package
 
 1. Create directory under `packages/`
-2. Add `package.json` with `@acp/` scope
+2. Add `package.json` with `@docsmyth/` scope
 3. Add `tsconfig.json` extending `../../tsconfig.base.json`
 4. Add reference to root `tsconfig.json`
 5. Add to `pnpm-workspace.yaml` if not using `packages/*` glob

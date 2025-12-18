@@ -1,4 +1,4 @@
-import type { OverlaySummary } from '@acp/ir-spec';
+import type { OverlaySummary } from '@docsmyth/ir-spec';
 
 export interface OverlaySummaryBadgeProps {
   summary: OverlaySummary;

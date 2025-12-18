@@ -209,11 +209,11 @@ When using this template in a standalone project, update `package.json` to use n
 ```json
 {
   "dependencies": {
-    "@acp/runtime-node-express": "^0.1.0",
-    "@acp/ir-spec": "^0.1.0"
+    "@docsmyth/runtime-node-express": "^0.1.0",
+    "@docsmyth/ir-spec": "^0.1.0"
   },
   "devDependencies": {
-    "@acp/cli": "^0.1.0"
+    "@docsmyth/cli": "^0.1.0"
   }
 }
 ```
@@ -239,7 +239,7 @@ pnpm run contract:validate
 Run with verbose output:
 
 ```bash
-acp evidence verify contract/contract.ir.json --evidence ./evidence.ndjson --verbose
+docsmyth evidence verify contract/contract.ir.json --evidence ./evidence.ndjson --verbose
 ```
 
 This shows which events failed and why.

@@ -1,12 +1,12 @@
 {
-  "name": "@acp/linter",
-  "version": "0.1.1-rc.0",
+  "name": "@docsmyth/linter",
+  "version": "0.1.1-rc.2",
   "description": "API Contract Platform Linter - Breaking change detection and contract diffing",
   "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-org/api-contract-platform.git",
+    "url": "https://github.com/HarshXAI/docsmyth.git",
     "directory": "packages/linter"
   },
   "engines": {
@@ -39,7 +39,7 @@
     "clean": "rm -rf dist *.tsbuildinfo"
   },
   "dependencies": {
-    "@acp/ir-spec": "workspace:*"
+    "@docsmyth/ir-spec": "workspace:*"
   },
   "devDependencies": {
     "vitest": "^2.1.8"

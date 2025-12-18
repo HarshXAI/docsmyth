@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useHubClient } from '../context/HubClientContext';
-import type { ContractIR, Overlay, OverlaySummary } from '@acp/ir-spec';
-import { applyOverlay } from '@acp/ir-sdk';
-import type { OpenAPIDocument } from '@acp/hub-client';
+import type { ContractIR, Overlay, OverlaySummary } from '@docsmyth/ir-spec';
+import { applyOverlay } from '@docsmyth/ir-sdk';
+import type { OpenAPIDocument } from '@docsmyth/hub-client';
 
 export interface UseOverlayState {
     /** Currently selected overlay name (null = base) */

@@ -1,12 +1,12 @@
 {
-  "name": "@acp/path-matcher",
-  "version": "0.1.1-rc.0",
+  "name": "@docsmyth/path-matcher",
+  "version": "0.1.1-rc.2",
   "description": "API Contract Platform Path Matcher - Shared path matching utilities for IR path patterns",
   "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-org/api-contract-platform.git",
+    "url": "https://github.com/HarshXAI/docsmyth.git",
     "directory": "packages/path-matcher"
   },
   "engines": {
@@ -39,7 +39,7 @@
     "clean": "rm -rf dist *.tsbuildinfo"
   },
   "dependencies": {
-    "@acp/ir-spec": "workspace:*"
+    "@docsmyth/ir-spec": "workspace:*"
   },
   "devDependencies": {
     "vitest": "^2.1.8"

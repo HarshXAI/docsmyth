@@ -41,7 +41,7 @@ jobs:
       - name: Cache smoke-pack npm cache
         uses: actions/cache@v4
         with:
-          path: ~/.acp-smoke-npm-cache
+          path: ~/.docsmyth-smoke-npm-cache
           key: smoke-npm-cache-ubuntu-latest-node${{ matrix.node-version }}-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
             smoke-npm-cache-ubuntu-latest-node${{ matrix.node-version }}-
@@ -125,7 +125,7 @@ jobs:
           if [ -f "base/fixtures/contract-ir/v0.1/minimal-http.json" ] && [ -f "head/fixtures/contract-ir/v0.1/minimal-http.json" ]; then
             echo "Comparing contract fixtures..."
             cd head
-            pnpm exec acp diff ../base/fixtures/contract-ir/v0.1/minimal-http.json fixtures/contract-ir/v0.1/minimal-http.json --format text || {
+            pnpm exec docsmyth diff ../base/fixtures/contract-ir/v0.1/minimal-http.json fixtures/contract-ir/v0.1/minimal-http.json --format text || {
               echo "::error::Breaking changes detected in contract fixtures!"
               exit 1
             }

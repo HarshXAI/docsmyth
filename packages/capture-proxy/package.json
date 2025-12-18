@@ -1,12 +1,12 @@
 {
-  "name": "@acp/capture-proxy",
-  "version": "0.1.1-rc.0",
+  "name": "@docsmyth/capture-proxy",
+  "version": "0.1.1-rc.2",
   "description": "API Contract Platform Capture Proxy - Language-agnostic HTTP sidecar for evidence capture",
   "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-org/api-contract-platform.git",
+    "url": "https://github.com/HarshXAI/docsmyth.git",
     "directory": "packages/capture-proxy"
   },
   "engines": {
@@ -39,10 +39,10 @@
     "clean": "rm -rf dist *.tsbuildinfo"
   },
   "dependencies": {
-    "@acp/ir-spec": "workspace:*",
-    "@acp/evidence-sdk": "workspace:*",
-    "@acp/hub-client": "workspace:*",
-    "@acp/path-matcher": "workspace:*",
+    "@docsmyth/ir-spec": "workspace:*",
+    "@docsmyth/evidence-sdk": "workspace:*",
+    "@docsmyth/hub-client": "workspace:*",
+    "@docsmyth/path-matcher": "workspace:*",
     "http-proxy": "^1.18.1"
   },
   "devDependencies": {

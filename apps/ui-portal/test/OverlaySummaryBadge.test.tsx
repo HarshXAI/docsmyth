@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { OverlaySummaryBadge } from '../src/components/OverlaySummaryBadge.js';
-import type { OverlaySummary } from '@acp/ir-spec';
+import type { OverlaySummary } from '@docsmyth/ir-spec';
 
 describe('OverlaySummaryBadge', () => {
   const baseSummary: OverlaySummary = {

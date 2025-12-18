@@ -8,13 +8,13 @@ import { readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import AjvModule from 'ajv';
 import addFormatsModule from 'ajv-formats';
-import type { ContractIR, HttpOperation, JsonSchemaObject } from '@acp/ir-spec';
+import type { ContractIR, HttpOperation, JsonSchemaObject } from '@docsmyth/ir-spec';
 import type {
   EvidenceEvent,
   VerificationResult,
   OperationVerificationSummary,
   VerificationError,
-} from '@acp/evidence-sdk';
+} from '@docsmyth/evidence-sdk';
 
 // Handle ESM default export differences
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -1,5 +1,5 @@
 /**
- * Tests for @acp/hub-client
+ * Tests for @docsmyth/hub-client
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';

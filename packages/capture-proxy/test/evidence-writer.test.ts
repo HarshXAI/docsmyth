@@ -7,7 +7,7 @@ import {
     TRUNCATION_MARKER,
 } from '../src/evidence-writer.js';
 import { createLogger } from '../src/logger.js';
-import type { EvidenceEvent } from '@acp/evidence-sdk';
+import type { EvidenceEvent } from '@docsmyth/evidence-sdk';
 
 const testOutputDir = '/tmp/acp-evidence-writer-test';
 

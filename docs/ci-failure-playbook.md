@@ -92,7 +92,7 @@ When a breaking change is detected:
 
 3. **To bypass for intentional breaking changes:**
    ```bash
-   npx acp diff base.json head.json --allow-breaking
+   npx docsmyth diff base.json head.json --allow-breaking
    ```
 
 ### BC001: Endpoint Removed
@@ -229,7 +229,7 @@ SchemaDepthError: Maximum schema depth (100) exceeded in operation 'getData'
 
 2. **Increase max depth if needed:**
    ```bash
-   npx acp compile contract.json --max-depth 200
+   npx docsmyth compile contract.json --max-depth 200
    ```
 
 ---
@@ -252,7 +252,7 @@ Error at event 5: Unknown operation: getUserProfile
 2. Fix the operation ID in your runtime tagging
 3. Exclude unknown operations from verification:
    ```bash
-   npx acp evidence verify evidence.ndjson --contract contract.json --skip-unknown
+   npx docsmyth evidence verify evidence.ndjson --contract contract.json --skip-unknown
    ```
 
 ### Schema validation failed
@@ -303,16 +303,16 @@ Before asking for help, collect:
 
 ```bash
 # 1. ACP version
-npx acp --version
+npx docsmyth --version
 
 # 2. Validation output
-npx acp validate contract.json --verbose
+npx docsmyth validate contract.json --verbose
 
 # 3. Diff output
-npx acp diff base.json head.json --verbose
+npx docsmyth diff base.json head.json --verbose
 
 # 4. Evidence stats
-npx acp evidence stats evidence.ndjson
+npx docsmyth evidence stats evidence.ndjson
 ```
 
 ### Contact

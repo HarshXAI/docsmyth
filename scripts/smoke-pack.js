@@ -1,27 +1,27 @@
 #!/usr/bin/env node
 /**
- * Smoke test script for @acp/cli
+ * Smoke test script for @docsmyth/cli
  *
  * This script:
  * 1. Builds the workspace
  * 2. Packs all required packages (CLI and its dependencies)
  * 3. Creates a temp project and installs the tarballs
- * 4. Verifies internal @acp/* packages are resolved from tarballs, not registry
+ * 4. Verifies internal @docsmyth/* packages are resolved from tarballs, not registry
  * 5. Runs CLI commands to verify the package works when installed standalone
  *
- * IMPORTANT: Internal @acp/* packages must come from tarballs only.
+ * IMPORTANT: Internal @docsmyth/* packages must come from tarballs only.
  * External dependencies (ajv, commander, etc.) are fetched from npm normally.
  *
  * Registry isolation:
  * - Public registry (registry.npmjs.org) is used for external deps (ajv, commander, etc.)
- * - @acp scope is blocked via 127.0.0.1:9 (port 9 = "discard" protocol, instant ECONNREFUSED)
+ * - @docsmyth scope is blocked via 127.0.0.1:9 (port 9 = "discard" protocol, instant ECONNREFUSED)
  * - Using explicit 127.0.0.1 (not "localhost") avoids IPv6 ::1 resolution variability
  * - A temp .npmrc isolates the test from user's global ~/.npmrc (no token-expired noise)
  *
  * Cache behavior:
- * - By default, uses a stable cache at ~/.acp-smoke-npm-cache for faster repeated local runs
- * - Set ACP_SMOKE_ISOLATED_CACHE=1 to use a temp cache (full isolation, slower)
- * - CI should cache ~/.acp-smoke-npm-cache between runs for speed
+ * - By default, uses a stable cache at ~/.docsmyth-smoke-npm-cache for faster repeated local runs
+ * - Set DOCSMYTH_SMOKE_ISOLATED_CACHE=1 to use a temp cache (full isolation, slower)
+ * - CI should cache ~/.docsmyth-smoke-npm-cache between runs for speed
  *
  * Performance thresholds (regression tripwires):
  * - Total smoke test: must complete in < 60s (with warm cache)
@@ -107,11 +107,11 @@ function assertUnderThreshold(stage, actualMs, thresholdMs, hints) {
 
 /**
  * Determine npm cache path:
- * - Default: stable cache at ~/.acp-smoke-npm-cache (fast for repeated local runs)
- * - If ACP_SMOKE_ISOLATED_CACHE=1: use temp dir (full isolation, cold cache every time)
+ * - Default: stable cache at ~/.docsmyth-smoke-npm-cache (fast for repeated local runs)
+ * - If DOCSMYTH_SMOKE_ISOLATED_CACHE=1: use temp dir (full isolation, cold cache every time)
  */
-const USE_ISOLATED_CACHE = process.env.ACP_SMOKE_ISOLATED_CACHE === '1';
-const STABLE_CACHE_DIR = join(homedir(), '.acp-smoke-npm-cache');
+const USE_ISOLATED_CACHE = process.env.DOCSMYTH_SMOKE_ISOLATED_CACHE === '1';
+const STABLE_CACHE_DIR = join(homedir(), '.docsmyth-smoke-npm-cache');
 
 /** Global start time for overall timing */
 const GLOBAL_START = Date.now();
@@ -119,7 +119,7 @@ const GLOBAL_START = Date.now();
 /**
  * Content for isolated .npmrc that:
  * - Uses public npm registry for external deps
- * - Blocks @acp scope via 127.0.0.1:9 (instant ECONNREFUSED)
+ * - Blocks @docsmyth scope via 127.0.0.1:9 (instant ECONNREFUSED)
  * - Uses explicit 127.0.0.1 (not "localhost") to avoid IPv6 ::1 resolution variability
  * - Port 9 is the "discard" protocol - guaranteed to reject connections immediately
  * - Disables audit/fund to reduce noise
@@ -128,11 +128,11 @@ const GLOBAL_START = Date.now();
 const ISOLATED_NPMRC_CONTENT = `# Isolated npmrc for smoke test - DO NOT rely on user's global config
 registry=https://registry.npmjs.org/
 
-# Block @acp scope with instant-fail localhost trap:
+# Block @docsmyth scope with instant-fail localhost trap:
 # - 127.0.0.1 (explicit IPv4, avoids ::1 variability on some systems)
 # - Port 9 = "discard" protocol, guaranteed ECONNREFUSED
-# - This makes "npm install @acp/*" fail in ~100ms instead of ~70s
-@acp:registry=http://127.0.0.1:9
+# - This makes "npm install @docsmyth/*" fail in ~100ms instead of ~70s
+@docsmyth:registry=http://127.0.0.1:9
 
 # Reduce noise and improve CI determinism
 audit=false
@@ -143,7 +143,7 @@ prefer-offline=true
 # Disable update notifier
 update-notifier=false
 
-# Fast-fail config: minimize retry/timeout pain on blocked @acp scope
+# Fast-fail config: minimize retry/timeout pain on blocked @docsmyth scope
 # IMPORTANT: Do not remove these - they keep the negative test fast
 fetch-retries=0
 fetch-retry-mintimeout=100
@@ -284,10 +284,10 @@ function runExpectFail(command, options = {}) {
 }
 
 /**
- * Compute the transitive closure of @acp/* dependencies for a package.
+ * Compute the transitive closure of @docsmyth/* dependencies for a package.
  * This ensures all internal dependencies are packed, preventing registry fetch failures.
  * 
- * @param {string} pkgName - Package name without @acp/ prefix (e.g., 'cli')
+ * @param {string} pkgName - Package name without @docsmyth/ prefix (e.g., 'cli')
  * @param {Set<string>} visited - Set of already-visited packages (to avoid cycles)
  * @returns {string[]} - Array of package names in dependency order (leaves first)
  */
@@ -299,7 +299,7 @@ function computeDependencyClosure(pkgName, visited = new Set()) {
 
     const pkgDir = join(ROOT_DIR, 'packages', pkgName);
     const pkgJsonPath = join(pkgDir, 'package.json');
-    
+
     if (!existsSync(pkgJsonPath)) {
         log(`  Warning: Package ${pkgName} not found at ${pkgDir}`, 'yellow');
         return [];
@@ -307,11 +307,11 @@ function computeDependencyClosure(pkgName, visited = new Set()) {
 
     const pkgJson = JSON.parse(readFileSync(pkgJsonPath, 'utf-8'));
     const deps = pkgJson.dependencies || {};
-    
-    // Find all @acp/* dependencies
+
+    // Find all @docsmyth/* dependencies
     const acpDeps = Object.keys(deps)
-        .filter((dep) => dep.startsWith('@acp/'))
-        .map((dep) => dep.replace('@acp/', ''));
+        .filter((dep) => dep.startsWith('@docsmyth/'))
+        .map((dep) => dep.replace('@docsmyth/', ''));
 
     // Recursively compute closure for each dependency
     const result = [];
@@ -322,22 +322,22 @@ function computeDependencyClosure(pkgName, visited = new Set()) {
 
     // Add this package after its dependencies (topological order)
     result.push(pkgName);
-    
+
     return result;
 }
 
 /**
  * Get all packages to pack for the CLI, computed from dependency closure.
- * This is future-proof: adding new @acp/* deps to CLI or its transitive deps
+ * This is future-proof: adding new @docsmyth/* deps to CLI or its transitive deps
  * will automatically include them in the smoke test.
  */
 function getPackagesToPack() {
-    log('\nComputing @acp/* dependency closure for CLI...', 'blue');
+    log('\nComputing @docsmyth/* dependency closure for CLI...', 'blue');
     const closure = computeDependencyClosure('cli');
-    
+
     // Remove duplicates while preserving order
     const uniquePackages = [...new Set(closure)];
-    
+
     log(`  Packages to pack (${uniquePackages.length}): ${uniquePackages.join(', ')}`);
     return uniquePackages;
 }
@@ -370,7 +370,7 @@ function packAll(tempDir) {
         }
 
         tarballs.push({
-            pkg: `@acp/${pkg}`,
+            pkg: `@docsmyth/${pkg}`,
             file: tarball,
             path: join(tempDir, tarball),
         });
@@ -384,7 +384,7 @@ function packAll(tempDir) {
 /**
  * Install tarballs in test project.
  * Uses --prefer-offline --progress=false for determinism and cleaner CI logs.
- * Uses isolated .npmrc and cache to prevent token-expired notices and block @acp scope.
+ * Uses isolated .npmrc and cache to prevent token-expired notices and block @docsmyth scope.
  * @param {string} testProjectDir - Path to test project
  * @param {Array} tarballs - Array of tarball info objects
  * @param {object} npmEnv - Isolated npm environment (from buildNpmEnv)
@@ -392,7 +392,7 @@ function packAll(tempDir) {
 function installTarballs(testProjectDir, tarballs, npmEnv) {
     const tarballPaths = tarballs.map((t) => t.path).join(' ');
 
-    // Install with isolated env (blocks @acp scope, allows public registry)
+    // Install with isolated env (blocks @docsmyth scope, allows public registry)
     // --prefer-offline: use cache when possible for speed
     // --progress=false: cleaner CI logs
     runCmd(`npm install --prefer-offline --progress=false ${tarballPaths}`, {
@@ -402,7 +402,7 @@ function installTarballs(testProjectDir, tarballs, npmEnv) {
 }
 
 /**
- * Verify that internal @acp/* packages were installed from tarballs, not fetched from registry.
+ * Verify that internal @docsmyth/* packages were installed from tarballs, not fetched from registry.
  * Checks:
  * 1. Each package exists in node_modules
  * 2. Package has expected repository marker
@@ -425,7 +425,7 @@ function verifyInternalPackages(testProjectDir, tarballs, npmEnv) {
 
         // Read package.json to verify it's our package
         const pkgJson = JSON.parse(readFileSync(join(pkgPath, 'package.json'), 'utf-8'));
-        if (!pkgJson.repository?.url?.includes('api-contract-platform')) {
+        if (!pkgJson.repository?.url?.includes('docsmyth')) {
             throw new Error(`Package ${pkg} appears to be from registry, not tarball`);
         }
 
@@ -473,7 +473,7 @@ function verifyInternalPackages(testProjectDir, tarballs, npmEnv) {
         const packages = lockfile.packages || {};
 
         for (const { pkg } of tarballs) {
-            // In npm v3 lockfile, packages are keyed by path like "node_modules/@acp/ir-spec"
+            // In npm v3 lockfile, packages are keyed by path like "node_modules/@docsmyth/ir-spec"
             const pkgKey = `node_modules/${pkg}`;
             const pkgEntry = packages[pkgKey];
 
@@ -483,7 +483,7 @@ function verifyInternalPackages(testProjectDir, tarballs, npmEnv) {
                     throw new Error(
                         `CRITICAL: ${pkg} was fetched from npm registry!\n` +
                         `  resolved: ${resolved}\n` +
-                        `  This indicates the @acp scope blocking failed.`
+                        `  This indicates the @docsmyth scope blocking failed.`
                     );
                 }
                 if (!resolved.startsWith('file:')) {
@@ -511,10 +511,10 @@ function verifyPackageResolution(testProjectDir) {
     log('\nVerifying package resolution (ESM + CJS)...', 'blue');
 
     const packagesToVerify = [
-        { pkg: '@acp/ir-spec', expectCjs: true, expectEsm: true },
-        { pkg: '@acp/evidence-sdk', expectCjs: true, expectEsm: true },
-        { pkg: '@acp/compiler-openapi', expectCjs: true, expectEsm: true },
-        { pkg: '@acp/cli', expectCjs: true, expectEsm: true },
+        { pkg: '@docsmyth/ir-spec', expectCjs: true, expectEsm: true },
+        { pkg: '@docsmyth/evidence-sdk', expectCjs: true, expectEsm: true },
+        { pkg: '@docsmyth/compiler-openapi', expectCjs: true, expectEsm: true },
+        { pkg: '@docsmyth/cli', expectCjs: true, expectEsm: true },
     ];
 
     for (const { pkg, expectCjs, expectEsm } of packagesToVerify) {
@@ -564,7 +564,7 @@ function verifyPackageResolution(testProjectDir) {
 }
 
 /**
- * Test that attempting to install @acp/* from registry fails.
+ * Test that attempting to install @docsmyth/* from registry fails.
  * This is a negative test to ensure our scope blocking works.
  * Also verifies the failure is FAST (regression tripwire for fast-fail config).
  * @param {string} testProjectDir - Path to test project
@@ -572,13 +572,13 @@ function verifyPackageResolution(testProjectDir) {
  * @returns {number} Elapsed time in milliseconds
  */
 function verifyRegistryBlocking(testProjectDir, npmEnv) {
-    log('\nVerifying @acp scope registry blocking (negative test)...', 'blue');
+    log('\nVerifying @docsmyth scope registry blocking (negative test)...', 'blue');
 
     const startTime = Date.now();
 
-    // Try to install @acp/ir-spec from registry (should fail because @acp:registry is blocked)
+    // Try to install @docsmyth/ir-spec from registry (should fail because @docsmyth:registry is blocked)
     const result = runExpectFail(
-        'npm install @acp/ir-spec@0.1.0 --prefer-offline=false --progress=false',
+        'npm install @docsmyth/ir-spec@0.1.0 --prefer-offline=false --progress=false',
         {
             cwd: testProjectDir,
             env: npmEnv,
@@ -589,41 +589,41 @@ function verifyRegistryBlocking(testProjectDir, npmEnv) {
 
     if (!result.failed) {
         throw new Error(
-            'CRITICAL: npm install @acp/ir-spec succeeded!\n' +
-            'This means the @acp scope registry blocking is NOT working.\n' +
+            'CRITICAL: npm install @docsmyth/ir-spec succeeded!\n' +
+            'This means the @docsmyth scope registry blocking is NOT working.\n' +
             'The scoped registry should point to http://127.0.0.1:9 (instant ECONNREFUSED).'
         );
     }
 
-    log(`  ✓ npm install @acp/ir-spec@0.1.0 failed as expected (exit code: ${result.exitCode})`);
+    log(`  ✓ npm install @docsmyth/ir-spec@0.1.0 failed as expected (exit code: ${result.exitCode})`);
     log(`  ✓ Failed in ${formatTime(elapsed)} (threshold: ${formatTime(THRESHOLDS.registryBlocking)})`);
 
     // Regression tripwire: if this takes too long, someone broke the fast-fail config
     assertUnderThreshold('Registry blocking', elapsed, THRESHOLDS.registryBlocking, [
-        '@acp:registry must point to http://127.0.0.1:9 (port 9 = instant ECONNREFUSED)',
+        '@docsmyth:registry must point to http://127.0.0.1:9 (port 9 = instant ECONNREFUSED)',
         'Check .npmrc has: fetch-retries=0, fetch-retry-mintimeout=100, network-timeout=3000',
         'Verify NPM_CONFIG_USERCONFIG points to the isolated .npmrc (not user global)',
         'Ensure no proxy/firewall is intercepting localhost connections',
         'If on Windows, confirm 127.0.0.1:9 is not bound to a real service',
     ]);
 
-    logSuccess('@acp scope registry blocking verified (fast failure confirmed)');
+    logSuccess('@docsmyth scope registry blocking verified (fast failure confirmed)');
     return elapsed;
 }
 
 /**
- * Verify that @acp/ir-spec can load its schema at runtime.
+ * Verify that @docsmyth/ir-spec can load its schema at runtime.
  * This ensures the schema files are included in the tarball.
  * @param {string} testProjectDir - Path to test project
  */
 function verifySchemaRuntimeLoading(testProjectDir) {
-    log('\nVerifying @acp/ir-spec schema can be loaded at runtime...', 'blue');
+    log('\nVerifying @docsmyth/ir-spec schema can be loaded at runtime...', 'blue');
 
     // Check if the schema file exists in the installed package
     const schemaPath = join(
         testProjectDir,
         'node_modules',
-        '@acp',
+        '@docsmyth',
         'ir-spec',
         'schemas',
         'contract-ir.v0.1.schema.json'
@@ -631,7 +631,7 @@ function verifySchemaRuntimeLoading(testProjectDir) {
 
     if (!existsSync(schemaPath)) {
         throw new Error(
-            `Schema file not found in installed @acp/ir-spec: ${schemaPath}\n` +
+            `Schema file not found in installed @docsmyth/ir-spec: ${schemaPath}\n` +
             'Ensure "schemas" is included in the package.json "files" array.'
         );
     }
@@ -644,7 +644,7 @@ function verifySchemaRuntimeLoading(testProjectDir) {
 
     log(`  ✓ Schema file exists: ${schemaPath}`);
     log(`  ✓ Schema $id: ${schemaContent.$id}`);
-    logSuccess('@acp/ir-spec schema loads correctly at runtime');
+    logSuccess('@docsmyth/ir-spec schema loads correctly at runtime');
 }
 
 /**
@@ -655,7 +655,7 @@ async function main() {
     const totalStart = Date.now();
 
     try {
-        log('\n=== ACP CLI Smoke Test ===\n', 'blue');
+        log('\n=== Docsmyth CLI Smoke Test ===\n', 'blue');
         log(`Node version: ${process.version}`, 'dim');
         log(`Platform: ${process.platform} ${process.arch}`, 'dim');
 
@@ -669,12 +669,12 @@ async function main() {
         // Step 2: Create temp directory
         logStep('2/10', 'Creating temporary directory...');
         const setupStart = Date.now();
-        tempDir = mkdtempSync(join(tmpdir(), 'acp-smoke-'));
+        tempDir = mkdtempSync(join(tmpdir(), 'docsmyth-smoke-'));
         log(`Temp dir: ${tempDir}`);
 
         // Determine npm cache path:
         // - Default: stable cache for faster repeated runs
-        // - ACP_SMOKE_ISOLATED_CACHE=1: temp cache for full isolation
+        // - DOCSMYTH_SMOKE_ISOLATED_CACHE=1: temp cache for full isolation
         let npmCachePath;
         if (USE_ISOLATED_CACHE) {
             npmCachePath = join(tempDir, '.npm-cache');
@@ -703,7 +703,7 @@ async function main() {
         mkdirSync(testProjectDir);
 
         // Create isolated .npmrc to:
-        // - Block @acp scope (point to unreachable address)
+        // - Block @docsmyth scope (point to unreachable address)
         // - Allow public registry for external deps
         // - Avoid token-expired noise from user's global config
         const npmrcPath = join(testProjectDir, '.npmrc');
@@ -718,7 +718,7 @@ async function main() {
             join(testProjectDir, 'package.json'),
             JSON.stringify(
                 {
-                    name: 'acp-smoke-test',
+                    name: 'docsmyth-smoke-test',
                     version: '1.0.0',
                     private: true,
                     type: 'module',
@@ -774,7 +774,7 @@ async function main() {
         verifySchemaRuntimeLoading(testProjectDir);
         logStageComplete('Schema', schemaStart);
 
-        // Step 8: Verify @acp registry blocking (negative test)
+        // Step 8: Verify @docsmyth registry blocking (negative test)
         logStep('8/10', 'Verifying registry blocking...');
         const blockingStart = Date.now();
         verifyRegistryBlocking(testProjectDir, npmEnv);
@@ -785,23 +785,23 @@ async function main() {
         const cliStart = Date.now();
 
         // Get the path to the installed CLI
-        const cliPath = join(testProjectDir, 'node_modules', '.bin', 'acp');
+        const cliPath = join(testProjectDir, 'node_modules', '.bin', 'docsmyth');
 
         // Test 1: --help
-        log('\nTest 1: acp --help', 'blue');
+        log('\nTest 1: docsmyth --help', 'blue');
         runCmd(`"${cliPath}" --help`, { cwd: testProjectDir });
-        logSuccess('acp --help works');
+        logSuccess('docsmyth --help works');
 
         // Test 2: compile with valid evidence
-        log('\nTest 2: acp compile with valid evidence', 'blue');
+        log('\nTest 2: docsmyth compile with valid evidence', 'blue');
         runCmd(
             `"${cliPath}" compile fixtures/evidence/orders-contract.json --out output --evidence fixtures/evidence/orders-evidence.ndjson --verify-evidence --coverage`,
             { cwd: testProjectDir }
         );
-        logSuccess('acp compile with valid evidence works');
+        logSuccess('docsmyth compile with valid evidence works');
 
         // Test 3: compile with invalid evidence (should fail)
-        log('\nTest 3: acp compile with invalid evidence (should fail)', 'blue');
+        log('\nTest 3: docsmyth compile with invalid evidence (should fail)', 'blue');
         const result = runExpectFail(
             `"${cliPath}" compile fixtures/evidence/orders-contract.json --out output --evidence fixtures/evidence/invalid-evidence.ndjson --verify-evidence`,
             { cwd: testProjectDir }
@@ -809,10 +809,10 @@ async function main() {
 
         if (result.failed) {
             logSuccess(
-                `acp compile with invalid evidence failed as expected (exit code: ${result.exitCode})`
+                `docsmyth compile with invalid evidence failed as expected (exit code: ${result.exitCode})`
             );
         } else {
-            throw new Error('Expected acp compile with invalid evidence to fail, but it succeeded');
+            throw new Error('Expected docsmyth compile with invalid evidence to fail, but it succeeded');
         }
 
         logStageComplete('CLI tests', cliStart);
@@ -824,9 +824,9 @@ async function main() {
         // Regression tripwire: fail if total time exceeds threshold
         // This catches misconfigurations that would slow down CI
         assertUnderThreshold('Total smoke-pack time', totalElapsed, THRESHOLDS.totalTime, [
-            'npm cache may be cold - check ~/.acp-smoke-npm-cache exists and is cached in CI',
-            'ACP_SMOKE_ISOLATED_CACHE=1 forces cold cache - unset for normal CI runs',
-            '@acp:registry must use port 9 for instant fail (not a real registry)',
+            'npm cache may be cold - check ~/.docsmyth-smoke-npm-cache exists and is cached in CI',
+            'DOCSMYTH_SMOKE_ISOLATED_CACHE=1 forces cold cache - unset for normal CI runs',
+            '@docsmyth:registry must use port 9 for instant fail (not a real registry)',
             'Check .npmrc has: fetch-retries=0, network-timeout=3000',
             'turbo cache may be cold - check .turbo is cached in CI',
             'External npm packages may be slow to fetch - check network/proxy settings',

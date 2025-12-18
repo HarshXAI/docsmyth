@@ -6,7 +6,7 @@
 
 import { appendFileSync, mkdirSync, existsSync } from 'node:fs';
 import { dirname } from 'node:path';
-import type { EvidenceEvent } from '@acp/evidence-sdk';
+import type { EvidenceEvent } from '@docsmyth/evidence-sdk';
 import { createLogger, type Logger } from './logger.js';
 
 /**
@@ -34,7 +34,7 @@ export interface NdjsonEmitterOptions {
  *
  * @example
  * ```ts
- * import { createNdjsonEmitter } from '@acp/runtime-node-express';
+ * import { createNdjsonEmitter } from '@docsmyth/runtime-node-express';
  *
  * const emitter = createNdjsonEmitter({
  *   filePath: '.acp/evidence.ndjson',

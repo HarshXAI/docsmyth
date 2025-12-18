@@ -1,14 +1,14 @@
 import { useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { diffContract } from '@acp/linter';
-import type { ContractIR } from '@acp/ir-spec';
+import { diffContract } from '@docsmyth/linter';
+import type { ContractIR } from '@docsmyth/ir-spec';
 import { useHubClient } from '../context/HubClientContext';
 import { useAsync } from '../hooks/useAsync';
 import { Loading } from '../components/Loading';
 import { ErrorState } from '../components/ErrorState';
 import { Breadcrumbs } from '../components/Breadcrumbs';
 import { DiffReportViewer } from '../components/DiffReportViewer';
-import type { DiffReport } from '@acp/linter';
+import type { DiffReport } from '@docsmyth/linter';
 
 export function DiffPage() {
   const { service } = useParams<{ service: string }>();
@@ -69,7 +69,7 @@ export function DiffPage() {
     try {
       const { base, head } = await client.getContractsForDiff(service!, baseVersion, headVersion);
 
-      // Run diff using @acp/linter
+      // Run diff using @docsmyth/linter
       const report = diffContract(base.ir as ContractIR, head.ir as ContractIR, {
         includeNonBreaking: true,
       });

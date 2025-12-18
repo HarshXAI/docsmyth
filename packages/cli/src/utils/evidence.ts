@@ -5,8 +5,8 @@
  */
 
 import { readFileSync } from 'node:fs';
-import type { EvidenceEvent } from '@acp/evidence-sdk';
-import type { ContractIR } from '@acp/ir-spec';
+import type { EvidenceEvent } from '@docsmyth/evidence-sdk';
+import type { ContractIR } from '@docsmyth/ir-spec';
 
 /**
  * Coverage statistics for a single operation

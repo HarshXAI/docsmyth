@@ -1,12 +1,12 @@
 {
-  "name": "@acp/evidence-sdk",
-  "version": "0.1.1-rc.0",
+  "name": "@docsmyth/evidence-sdk",
+  "version": "0.1.1-rc.2",
   "description": "API Contract Platform Evidence SDK - Capture and verify API evidence",
   "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-org/api-contract-platform.git",
+    "url": "https://github.com/HarshXAI/docsmyth.git",
     "directory": "packages/evidence-sdk"
   },
   "engines": {

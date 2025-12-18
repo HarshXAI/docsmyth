@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { DiffReport, DiffFinding } from '@acp/linter';
+import type { DiffReport, DiffFinding } from '@docsmyth/linter';
 
 interface DiffReportViewerProps {
   report: DiffReport;

@@ -1,5 +1,5 @@
 # ACP Contract Check Workflow
-# 
+#
 # This reusable workflow validates API contracts against changes in your service.
 # It can be used as a template or called as a reusable workflow from your CI.
 #
@@ -16,7 +16,7 @@
 # Usage as reusable workflow:
 #   jobs:
 #     contract-check:
-#       uses: your-org/api-contract-platform/.github/workflows/acp-contract-check.yml@main
+#       uses: HarshXAI/docsmyth/.github/workflows/docsmyth-contract-check.yml@main
 #       with:
 #         contract-path: ./contract/contract.ir.json
 
@@ -85,12 +85,12 @@ jobs:
     outputs:
       contract-hash: ${{ steps.hash.outputs.hash }}
       validation-passed: ${{ steps.validate.outputs.passed }}
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Full history for diff against base
+          fetch-depth: 0 # Full history for diff against base
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -116,7 +116,7 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install ACP CLI
-        run: pnpm add -g @acp/cli
+        run: pnpm add -g @docsmyth/cli
 
       - name: Compute contract hash
         id: hash
@@ -129,7 +129,7 @@ jobs:
         id: validate
         run: |
           echo "::group::Contract Validation"
-          if acp validate "$CONTRACT_PATH"; then
+          if docsmyth validate "$CONTRACT_PATH"; then
             echo "passed=true" >> $GITHUB_OUTPUT
             echo "✅ Contract validation passed"
           else
@@ -146,9 +146,9 @@ jobs:
             echo "  3. Unsupported media types"
             echo ""
             echo "Run locally to debug:"
-            echo "  acp validate $CONTRACT_PATH --verbose"
+            echo "  docsmyth validate $CONTRACT_PATH --verbose"
             echo ""
-            echo "Documentation: https://github.com/your-org/api-contract-platform/blob/main/docs/troubleshooting.md"
+            echo "Documentation: https://github.com/HarshXAI/docsmyth/blob/main/docs/troubleshooting.md"
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             exit 1
           fi
@@ -167,7 +167,7 @@ jobs:
     name: Compile to OpenAPI
     runs-on: ubuntu-latest
     needs: validate
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -196,15 +196,15 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install ACP CLI
-        run: pnpm add -g @acp/cli
+        run: pnpm add -g @docsmyth/cli
 
       - name: Compile to OpenAPI
         id: compile
         run: |
           echo "::group::OpenAPI Compilation"
           OUTPUT_PATH="${CONTRACT_PATH%.ir.json}.openapi.json"
-          
-          if acp compile "$CONTRACT_PATH" --format openapi --output "$OUTPUT_PATH"; then
+
+          if docsmyth compile "$CONTRACT_PATH" --format openapi --output "$OUTPUT_PATH"; then
             echo "✅ OpenAPI compilation successful"
             echo "output-path=$OUTPUT_PATH" >> $GITHUB_OUTPUT
           else
@@ -220,9 +220,9 @@ jobs:
             echo "  3. Missing or circular schema references"
             echo ""
             echo "Run locally to debug:"
-            echo "  acp compile $CONTRACT_PATH --format openapi --verbose"
+            echo "  docsmyth compile $CONTRACT_PATH --format openapi --verbose"
             echo ""
-            echo "Documentation: https://github.com/your-org/api-contract-platform/blob/main/docs/schema-support.md"
+            echo "Documentation: https://github.com/HarshXAI/docsmyth/blob/main/docs/schema-support.md"
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             exit 1
           fi
@@ -241,7 +241,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: validate
     if: github.event_name == 'pull_request'
-    
+
     steps:
       - name: Checkout PR
         uses: actions/checkout@v4
@@ -272,7 +272,7 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install ACP CLI
-        run: pnpm add -g @acp/cli
+        run: pnpm add -g @docsmyth/cli
 
       - name: Get base contract
         id: base
@@ -280,7 +280,7 @@ jobs:
           echo "::group::Fetching base contract"
           BASE_BRANCH="${{ github.base_ref }}"
           BASE_CONTRACT="/tmp/base-contract.ir.json"
-          
+
           # Fetch base branch contract
           if git show "origin/$BASE_BRANCH:$CONTRACT_PATH" > "$BASE_CONTRACT" 2>/dev/null; then
             echo "base-path=$BASE_CONTRACT" >> $GITHUB_OUTPUT
@@ -298,11 +298,11 @@ jobs:
         run: |
           echo "::group::Contract Diff Analysis"
           BASE_CONTRACT="${{ steps.base.outputs.base-path }}"
-          
+
           # Run diff and capture output
           DIFF_OUTPUT=$(acp diff "$BASE_CONTRACT" "$CONTRACT_PATH" --format json 2>&1) || true
           echo "$DIFF_OUTPUT" > /tmp/diff-result.json
-          
+
           # Check for breaking changes
           if echo "$DIFF_OUTPUT" | grep -q '"breaking":true' || echo "$DIFF_OUTPUT" | grep -q '"severity":"breaking"'; then
             echo "has-breaking=true" >> $GITHUB_OUTPUT
@@ -312,7 +312,7 @@ jobs:
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             echo "📋 BREAKING CHANGE SUMMARY"
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-            acp diff "$BASE_CONTRACT" "$CONTRACT_PATH" --format human || true
+            docsmyth diff "$BASE_CONTRACT" "$CONTRACT_PATH" --format human || true
             echo ""
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             echo "📖 NEXT STEPS"
@@ -327,7 +327,7 @@ jobs:
             echo "If this is intentional, add '[breaking]' to your commit message"
             echo "or set 'fail-on-breaking: false' in the workflow."
             echo ""
-            echo "Documentation: https://github.com/your-org/api-contract-platform/blob/main/docs/release-process.md"
+            echo "Documentation: https://github.com/HarshXAI/docsmyth/blob/main/docs/release-process.md"
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             
             if [[ "${{ inputs.fail-on-breaking || 'true' }}" == "true" ]]; then
@@ -339,7 +339,7 @@ jobs:
           else
             echo "has-breaking=false" >> $GITHUB_OUTPUT
             echo "✅ No breaking changes detected"
-            acp diff "$BASE_CONTRACT" "$CONTRACT_PATH" --format human || true
+            docsmyth diff "$BASE_CONTRACT" "$CONTRACT_PATH" --format human || true
           fi
           echo "::endgroup::"
 
@@ -358,43 +358,43 @@ jobs:
           script: |
             const hasBreaking = '${{ steps.diff.outputs.has-breaking }}' === 'true';
             const fs = require('fs');
-            
+
             let diffContent = '';
             try {
               diffContent = fs.readFileSync('/tmp/diff-result.json', 'utf8');
             } catch (e) {
               diffContent = 'Unable to read diff results';
             }
-            
+
             const emoji = hasBreaking ? '⚠️' : '✅';
             const status = hasBreaking ? 'Breaking Changes Detected' : 'No Breaking Changes';
-            
+
             const body = `## ${emoji} API Contract Check: ${status}
-            
+
             <details>
             <summary>View Diff Details</summary>
-            
+
             \`\`\`json
             ${diffContent.substring(0, 3000)}${diffContent.length > 3000 ? '\n...(truncated)' : ''}
             \`\`\`
-            
+
             </details>
-            
+
             ${hasBreaking ? `
             ### Breaking Changes Require Action
-            
+
             Please review the changes above and:
             1. Confirm they are intentional
             2. Update any affected API consumers
             3. Consider if a new API version is needed
-            
-            📖 [Breaking Change Guidelines](https://github.com/your-org/api-contract-platform/blob/main/docs/release-process.md#breaking-changes)
+
+            📖 [Breaking Change Guidelines](https://github.com/HarshXAI/docsmyth/blob/main/docs/release-process.md#breaking-changes)
             ` : ''}
-            
+
             ---
             *Generated by ACP Contract Check*
             `;
-            
+
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
@@ -407,7 +407,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: validate
     if: ${{ !inputs.skip-evidence }}
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -436,7 +436,7 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install ACP CLI
-        run: pnpm add -g @acp/cli
+        run: pnpm add -g @docsmyth/cli
 
       - name: Check for evidence files
         id: check
@@ -455,19 +455,19 @@ jobs:
         if: steps.check.outputs.has-evidence == 'true'
         run: |
           echo "::group::Evidence Verification"
-          
+
           # Verify each evidence file
           FAILED=false
           for evidence_file in $EVIDENCE_PATH; do
             echo "Verifying: $evidence_file"
-            if acp evidence verify "$evidence_file" --contract "$CONTRACT_PATH"; then
+            if docsmyth evidence verify "$evidence_file" --contract "$CONTRACT_PATH"; then
               echo "✅ $evidence_file passed verification"
             else
               echo "::error::Evidence verification failed for $evidence_file"
               FAILED=true
             fi
           done
-          
+
           if [ "$FAILED" = true ]; then
             echo ""
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -481,21 +481,21 @@ jobs:
             echo ""
             echo "To debug locally:"
             echo "  1. Run tests with: ACP_EVIDENCE_CAPTURE=true pnpm test"
-            echo "  2. Verify evidence: acp evidence verify $EVIDENCE_PATH --contract $CONTRACT_PATH --verbose"
-            echo "  3. Check coverage: acp evidence coverage $EVIDENCE_PATH --contract $CONTRACT_PATH"
+            echo "  2. Verify evidence: docsmyth evidence verify $EVIDENCE_PATH --contract $CONTRACT_PATH --verbose"
+            echo "  3. Check coverage: docsmyth evidence coverage $EVIDENCE_PATH --contract $CONTRACT_PATH"
             echo ""
-            echo "Documentation: https://github.com/your-org/api-contract-platform/blob/main/docs/troubleshooting.md"
+            echo "Documentation: https://github.com/HarshXAI/docsmyth/blob/main/docs/troubleshooting.md"
             echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
             exit 1
           fi
-          
+
           echo "::endgroup::"
 
       - name: Generate coverage report
         if: steps.check.outputs.has-evidence == 'true'
         run: |
           echo "::group::Coverage Report"
-          acp evidence coverage "$EVIDENCE_PATH" --contract "$CONTRACT_PATH" --format table || true
+          docsmyth evidence coverage "$EVIDENCE_PATH" --contract "$CONTRACT_PATH" --format table || true
           echo "::endgroup::"
 
       - name: Upload evidence artifacts
@@ -517,7 +517,7 @@ jobs:
       needs.compile.result == 'success' &&
       (needs.evidence.result == 'success' || needs.evidence.result == 'skipped') &&
       inputs.hub-url != ''
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -533,7 +533,7 @@ jobs:
           version: 9
 
       - name: Install ACP CLI
-        run: pnpm add -g @acp/cli
+        run: pnpm add -g @docsmyth/cli
 
       - name: Download OpenAPI artifact
         uses: actions/download-artifact@v4
@@ -547,23 +547,23 @@ jobs:
           ACP_HUB_TOKEN: ${{ secrets.hub-token }}
         run: |
           echo "::group::Publishing to Hub"
-          
+
           # Find the OpenAPI file
           OPENAPI_FILE=$(find /tmp/artifacts -name "*.openapi.json" | head -1)
-          
+
           if [ -z "$OPENAPI_FILE" ]; then
             echo "::error::OpenAPI file not found in artifacts"
             exit 1
           fi
-          
+
           # Publish contract
-          if acp hub publish --contract "$CONTRACT_PATH" --openapi "$OPENAPI_FILE"; then
+          if docsmyth hub publish --contract "$CONTRACT_PATH" --openapi "$OPENAPI_FILE"; then
             echo "✅ Successfully published to Hub"
           else
             echo "::error::Failed to publish to Hub"
             exit 1
           fi
-          
+
           echo "::endgroup::"
 
   summary:
@@ -571,27 +571,27 @@ jobs:
     runs-on: ubuntu-latest
     needs: [validate, compile, diff, evidence]
     if: always()
-    
+
     steps:
       - name: Generate Summary
         run: |
           echo "## 📋 ACP Contract Check Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          
+
           # Validation
           if [ "${{ needs.validate.result }}" == "success" ]; then
             echo "✅ **Validation**: Passed" >> $GITHUB_STEP_SUMMARY
           else
             echo "❌ **Validation**: Failed" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
           # Compilation
           if [ "${{ needs.compile.result }}" == "success" ]; then
             echo "✅ **OpenAPI Compilation**: Passed" >> $GITHUB_STEP_SUMMARY
           else
             echo "❌ **OpenAPI Compilation**: Failed" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
           # Diff (only on PRs)
           if [ "${{ needs.diff.result }}" == "skipped" ]; then
             echo "⏭️ **Breaking Change Check**: Skipped (not a PR)" >> $GITHUB_STEP_SUMMARY
@@ -600,7 +600,7 @@ jobs:
           else
             echo "⚠️ **Breaking Change Check**: Breaking changes detected" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
           # Evidence
           if [ "${{ needs.evidence.result }}" == "skipped" ]; then
             echo "⏭️ **Evidence Verification**: Skipped" >> $GITHUB_STEP_SUMMARY
@@ -609,9 +609,9 @@ jobs:
           else
             echo "❌ **Evidence Verification**: Failed" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "---" >> $GITHUB_STEP_SUMMARY
           echo "*Contract Hash*: \`${{ needs.validate.outputs.contract-hash || 'N/A' }}\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "📖 [Documentation](https://github.com/your-org/api-contract-platform/blob/main/docs/)" >> $GITHUB_STEP_SUMMARY
+          echo "📖 [Documentation](https://github.com/HarshXAI/docsmyth/blob/main/docs/)" >> $GITHUB_STEP_SUMMARY

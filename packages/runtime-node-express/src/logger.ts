@@ -1,5 +1,5 @@
 /**
- * Lightweight logger utility for @acp/runtime-node-express
+ * Lightweight logger utility for @docsmyth/runtime-node-express
  *
  * Provides structured logging with configurable severity levels.
  * Uses process.stderr for error/warn, process.stdout for info/debug.
@@ -69,7 +69,7 @@ function formatArgs(prefix: string, level: string, args: unknown[]): string {
  *
  * @example
  * ```ts
- * import { createLogger } from '@acp/runtime-node-express';
+ * import { createLogger } from '@docsmyth/runtime-node-express';
  *
  * const logger = createLogger({ level: 'debug', prefix: '[my-app]' });
  * logger.info('Server started');

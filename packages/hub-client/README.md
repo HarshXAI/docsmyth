@@ -1,17 +1,17 @@
-# @acp/hub-client
+# @docsmyth/hub-client
 
 Typed HTTP client for the API Contract Platform Hub.
 
 ## Installation
 
 ```bash
-pnpm add @acp/hub-client
+pnpm add @docsmyth/hub-client
 ```
 
 ## Usage
 
 ```typescript
-import { createHubClient, HubNotFoundError } from '@acp/hub-client';
+import { createHubClient, HubNotFoundError } from '@docsmyth/hub-client';
 
 const client = createHubClient({
   baseUrl: 'http://localhost:3000',
@@ -74,7 +74,7 @@ import {
   HubValidationError, // 400 - Invalid request
   HubAuthError, // 401 - Authentication failed
   HubServerError, // 5xx - Server errors
-} from '@acp/hub-client';
+} from '@docsmyth/hub-client';
 
 try {
   await client.getContract('unknown', '1.0.0');

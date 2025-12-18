@@ -1,13 +1,13 @@
-# @acp/path-matcher
+# @docsmyth/path-matcher
 
-Shared path matching utilities for Contract IR path patterns. Used by both `@acp/runtime-node-express` and `@acp/capture-proxy` to ensure consistent path matching behavior.
+Shared path matching utilities for Contract IR path patterns. Used by both `@docsmyth/runtime-node-express` and `@docsmyth/capture-proxy` to ensure consistent path matching behavior.
 
 ## Installation
 
 ```bash
-npm install @acp/path-matcher
+npm install @docsmyth/path-matcher
 # or
-pnpm add @acp/path-matcher
+pnpm add @docsmyth/path-matcher
 ```
 
 ## Features
@@ -22,7 +22,7 @@ pnpm add @acp/path-matcher
 ### Path Format Conversion
 
 ```typescript
-import { expressPathToIrPath, irPathToExpressPath } from '@acp/path-matcher';
+import { expressPathToIrPath, irPathToExpressPath } from '@docsmyth/path-matcher';
 
 // Convert Express to IR format
 expressPathToIrPath('/users/:id/posts/:postId');
@@ -36,7 +36,7 @@ irPathToExpressPath('/users/{id}/posts/{postId}');
 ### Path Matching
 
 ```typescript
-import { matchPath, normalizePath } from '@acp/path-matcher';
+import { matchPath, normalizePath } from '@docsmyth/path-matcher';
 
 // Normalize paths for comparison
 normalizePath('/users/'); // => '/users'
@@ -58,7 +58,7 @@ matchPath('/orders/123', '/users/{id}');
 For repeated matching against the same pattern:
 
 ```typescript
-import { createPathMatcher } from '@acp/path-matcher';
+import { createPathMatcher } from '@docsmyth/path-matcher';
 
 const matcher = createPathMatcher('/users/{userId}/posts/{postId}');
 // matcher.regex: /^\/users\/([^/]+)\/posts\/([^/]+)$/
@@ -71,8 +71,8 @@ const matcher = createPathMatcher('/users/{userId}/posts/{postId}');
 Match HTTP requests to Contract IR operations:
 
 ```typescript
-import { createOperationMatcher, findOperation } from '@acp/path-matcher';
-import type { ContractIR } from '@acp/ir-spec';
+import { createOperationMatcher, findOperation } from '@docsmyth/path-matcher';
+import type { ContractIR } from '@docsmyth/ir-spec';
 
 const contract: ContractIR = {
   irVersion: '0.1',

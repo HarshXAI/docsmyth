@@ -21,10 +21,10 @@ This RFC documents the scope boundaries and key decisions for Week 1 of the API 
    - CI pipeline (GitHub Actions)
 
 2. **Package scaffolding** (stubs that compile)
-   - `@acp/ir-spec` – Types + validation stub
-   - `@acp/ir-sdk` – Builder helpers
-   - `@acp/compiler-openapi` – IR → OpenAPI stub
-   - `@acp/cli` – Command stubs (validate, compile)
+   - `@docsmyth/ir-spec` – Types + validation stub
+   - `@docsmyth/ir-sdk` – Builder helpers
+   - `@docsmyth/compiler-openapi` – IR → OpenAPI stub
+   - `@docsmyth/cli` – Command stubs (validate, compile)
 
 3. **Fixture-driven development setup**
    - Canonical IR example (`minimal-http.json`)
@@ -110,7 +110,7 @@ This RFC documents the scope boundaries and key decisions for Week 1 of the API 
 
 ### 6. Workspace Package Naming
 
-**Decision**: Use `@acp/` scope for all packages.
+**Decision**: Use `@docsmyth/` scope for all packages.
 
 **Rationale**:
 
@@ -123,10 +123,10 @@ This RFC documents the scope boundaries and key decisions for Week 1 of the API 
 
 | Package                 | Week 1 Scope                              | Future Scope                        |
 | ----------------------- | ----------------------------------------- | ----------------------------------- |
-| `@acp/ir-spec`          | Types, basic validate()                   | Full JSON Schema validation         |
-| `@acp/ir-sdk`           | ref(), makeService(), makeHttpOperation() | Schema builders, operation builders |
-| `@acp/compiler-openapi` | Basic compilation stub                    | Full compilation, optimizations     |
-| `@acp/cli`              | validate, compile stubs                   | extract, diff, generate commands    |
+| `@docsmyth/ir-spec`          | Types, basic validate()                   | Full JSON Schema validation         |
+| `@docsmyth/ir-sdk`           | ref(), makeService(), makeHttpOperation() | Schema builders, operation builders |
+| `@docsmyth/compiler-openapi` | Basic compilation stub                    | Full compilation, optimizations     |
+| `@docsmyth/cli`              | validate, compile stubs                   | extract, diff, generate commands    |
 
 ## Fixture Files
 
@@ -174,10 +174,10 @@ pnpm test
 pnpm build
 
 # CLI works
-pnpm acp validate fixtures/contract-ir/v0.1/minimal-http.json
+pnpm docsmyth validate fixtures/contract-ir/v0.1/minimal-http.json
 # ✓ Contract IR is valid
 
-pnpm acp compile fixtures/contract-ir/v0.1/minimal-http.json --out ./output
+pnpm docsmyth compile fixtures/contract-ir/v0.1/minimal-http.json --out ./output
 # ✓ Compiled to: output/minimal-http.openapi.json
 ```
 

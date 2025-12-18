@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { HubClientError, HubConnectionError } from '@acp/hub-client';
+import { HubClientError, HubConnectionError } from '@docsmyth/hub-client';
 
 interface AsyncState<T> {
     data: T | null;

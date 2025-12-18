@@ -10,7 +10,7 @@ import { rmSync, existsSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { randomUUID } from 'node:crypto';
-import type { ContractIR } from '@acp/ir-spec';
+import type { ContractIR } from '@docsmyth/ir-spec';
 
 // Test fixtures
 const minimalIR: ContractIR = {

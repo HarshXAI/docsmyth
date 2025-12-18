@@ -3,7 +3,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import SwaggerParser from '@apidevtools/swagger-parser';
-import type { ContractIR } from '@acp/ir-spec';
+import type { ContractIR } from '@docsmyth/ir-spec';
 import { compileOpenApi } from '../src/index.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -17,7 +17,7 @@ async function validateOpenAPI(doc: unknown): Promise<void> {
   await SwaggerParser.validate(doc as object);
 }
 
-describe('@acp/compiler-openapi', () => {
+describe('@docsmyth/compiler-openapi', () => {
   describe('compileOpenApi()', () => {
     it('should compile a minimal IR to OpenAPI 3.1', async () => {
       const ir: ContractIR = {

@@ -42,7 +42,7 @@ const VALID_HTTP_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OP
  *
  * @example
  * ```ts
- * import { validateOverlay } from '@acp/ir-spec';
+ * import { validateOverlay } from '@docsmyth/ir-spec';
  *
  * const result = validateOverlay(overlayDoc);
  * if (!result.valid) {

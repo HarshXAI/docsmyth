@@ -18,7 +18,7 @@
 
 import { existsSync, mkdirSync, writeFileSync, readFileSync, renameSync } from 'node:fs';
 import { join } from 'node:path';
-import type { ContractIR } from '@acp/ir-spec';
+import type { ContractIR } from '@docsmyth/ir-spec';
 import {
     type ContractMetadata,
     type ContractStorage,

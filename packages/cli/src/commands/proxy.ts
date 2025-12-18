@@ -5,7 +5,7 @@
  * while capturing evidence events mapped to Contract IR operationIds.
  */
 
-import { startProxy, type ProxyConfig, type ContractSource } from '@acp/capture-proxy';
+import { startProxy, type ProxyConfig, type ContractSource } from '@docsmyth/capture-proxy';
 
 export interface ProxyCommandOptions {
     listen: string;

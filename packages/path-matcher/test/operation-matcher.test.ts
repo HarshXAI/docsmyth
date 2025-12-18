@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { createOperationMatcher, findOperation } from '../src/operation-matcher.js';
-import type { ContractIR } from '@acp/ir-spec';
+import type { ContractIR } from '@docsmyth/ir-spec';
 
 const testContract: ContractIR = {
   irVersion: '0.1',

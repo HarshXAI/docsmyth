@@ -74,7 +74,7 @@ jobs:
                   repo: context.repo.repo,
                   tag_name: tagName,
                   name: `${pkg.name} v${pkg.version}`,
-                  body: `## ${pkg.name}@${pkg.version}\n\nSee [CHANGELOG](https://github.com/${context.repo.owner}/${context.repo.repo}/blob/main/packages/${pkg.name.replace('@acp/', '')}/CHANGELOG.md) for details.`,
+                  body: `## ${pkg.name}@${pkg.version}\n\nSee [CHANGELOG](https://github.com/${context.repo.owner}/${context.repo.repo}/blob/main/packages/${pkg.name.replace('@docsmyth/', '')}/CHANGELOG.md) for details.`,
                   draft: false,
                   prerelease: pkg.version.includes('-'),
                 });

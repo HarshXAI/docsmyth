@@ -134,9 +134,9 @@ v0.1 is intentionally minimal. Future versions will extend the schema additively
 
 See packages:
 
-- `@acp/ir-spec` – TypeScript types and validation
-- `@acp/ir-sdk` – Builder helpers for programmatic construction
-- `@acp/compiler-openapi` – IR → OpenAPI 3.1 compilation
+- `@docsmyth/ir-spec` – TypeScript types and validation
+- `@docsmyth/ir-sdk` – Builder helpers for programmatic construction
+- `@docsmyth/compiler-openapi` – IR → OpenAPI 3.1 compilation
 
 ## Open Questions
 

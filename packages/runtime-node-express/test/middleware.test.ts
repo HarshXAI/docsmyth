@@ -7,8 +7,8 @@ import express, { type Express } from 'express';
 import request from 'supertest';
 import { existsSync, readFileSync, rmSync } from 'node:fs';
 import { dirname, join } from 'node:path';
-import type { ContractIR } from '@acp/ir-spec';
-import type { EvidenceEvent } from '@acp/evidence-sdk';
+import type { ContractIR } from '@docsmyth/ir-spec';
+import type { EvidenceEvent } from '@docsmyth/evidence-sdk';
 import { evidenceCapture, createMemoryEmitter } from '../src/index.js';
 
 const TEST_CONTRACT: ContractIR = {

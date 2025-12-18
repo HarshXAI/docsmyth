@@ -1,12 +1,12 @@
 {
-  "name": "@acp/compiler-openapi",
-  "version": "0.1.1-rc.0",
+  "name": "@docsmyth/compiler-openapi",
+  "version": "0.1.1-rc.2",
   "description": "API Contract Platform OpenAPI Compiler - Compile Contract IR to OpenAPI",
   "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-org/api-contract-platform.git",
+    "url": "https://github.com/HarshXAI/docsmyth.git",
     "directory": "packages/compiler-openapi"
   },
   "engines": {
@@ -39,7 +39,7 @@
     "clean": "rm -rf dist *.tsbuildinfo"
   },
   "dependencies": {
-    "@acp/ir-spec": "workspace:*"
+    "@docsmyth/ir-spec": "workspace:*"
   },
   "devDependencies": {
     "@apidevtools/swagger-parser": "^10.1.0",

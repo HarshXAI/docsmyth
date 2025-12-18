@@ -8,7 +8,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const fixturesDir = join(__dirname, '../../../fixtures/contract-ir/v0.1');
 const diffFixturesDir = join(__dirname, '../../../fixtures/diff');
 
-describe('@acp/cli', () => {
+describe('@docsmyth/cli', () => {
   let consoleLogSpy: ReturnType<typeof vi.spyOn>;
   let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
   let processExitSpy: ReturnType<typeof vi.spyOn>;

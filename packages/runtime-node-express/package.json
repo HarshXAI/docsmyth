@@ -1,12 +1,12 @@
 {
-  "name": "@acp/runtime-node-express",
-  "version": "0.1.1-rc.0",
+  "name": "@docsmyth/runtime-node-express",
+  "version": "0.1.1-rc.2",
   "description": "API Contract Platform Express Runtime - Middleware for evidence capture in Express apps",
   "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-org/api-contract-platform.git",
+    "url": "https://github.com/HarshXAI/docsmyth.git",
     "directory": "packages/runtime-node-express"
   },
   "engines": {
@@ -39,9 +39,9 @@
     "clean": "rm -rf dist *.tsbuildinfo"
   },
   "dependencies": {
-    "@acp/ir-spec": "workspace:*",
-    "@acp/evidence-sdk": "workspace:*",
-    "@acp/path-matcher": "workspace:*"
+    "@docsmyth/ir-spec": "workspace:*",
+    "@docsmyth/evidence-sdk": "workspace:*",
+    "@docsmyth/path-matcher": "workspace:*"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",

@@ -1,4 +1,4 @@
-# @acp/hub
+# @docsmyth/hub
 
 Contract Hub - Central storage and serving of API contracts for the API Contract Platform.
 
@@ -20,19 +20,19 @@ The Contract Hub provides a centralized HTTP service for storing and serving API
 pnpm build
 
 # Start the hub server
-pnpm --filter @acp/hub start
+pnpm --filter @docsmyth/hub start
 
 # Or with environment configuration
 ACP_HUB_TOKEN=your-secret-token \
 ACP_HUB_PORT=3456 \
 ACP_HUB_DATA_DIR=./data \
-pnpm --filter @acp/hub start
+pnpm --filter @docsmyth/hub start
 ```
 
 ### Publishing a Contract
 
 ```bash
-acp publish ./my-contract.ir.json \
+docsmyth publish ./my-contract.ir.json \
   --hub http://localhost:3456 \
   --service my-api \
   --version 1.0.0 \
@@ -42,7 +42,7 @@ acp publish ./my-contract.ir.json \
 ### Pulling a Contract
 
 ```bash
-acp pull \
+docsmyth pull \
   --hub http://localhost:3456 \
   --service my-api \
   --version 1.0.0 \
@@ -159,13 +159,13 @@ Tokens are **never** logged.
 
 ```bash
 # Run tests
-pnpm --filter @acp/hub test
+pnpm --filter @docsmyth/hub test
 
 # Type check
-pnpm --filter @acp/hub typecheck
+pnpm --filter @docsmyth/hub typecheck
 
 # Build
-pnpm --filter @acp/hub build
+pnpm --filter @docsmyth/hub build
 ```
 
 ## License

@@ -8,10 +8,10 @@ Run these commands to gather diagnostic information:
 
 ```bash
 # Check CLI version
-acp --version
+docsmyth --version
 
 # Validate contract
-acp validate contract/contract.ir.json --verbose
+docsmyth validate contract/contract.ir.json --verbose
 
 # Check Node.js version
 node --version
@@ -25,6 +25,7 @@ pnpm --version
 ### "Invalid contract: missing required field"
 
 **Symptom:**
+
 ```
 Error: Contract validation failed
   - /info/title: required field missing
@@ -37,8 +38,8 @@ Ensure your contract has all required fields:
 {
   "version": "0.1",
   "info": {
-    "title": "My API",        // Required
-    "version": "1.0.0"        // Required
+    "title": "My API", // Required
+    "version": "1.0.0" // Required
   },
   "operations": []
 }
@@ -47,11 +48,13 @@ Ensure your contract has all required fields:
 ### "Unknown schema reference"
 
 **Symptom:**
+
 ```
 Error: Cannot resolve $ref: #/schemas/UnknownType
 ```
 
 **Solution:**
+
 1. Check that the referenced schema exists in the `schemas` section
 2. Verify the reference path is correct (case-sensitive)
 
@@ -73,11 +76,13 @@ Error: Cannot resolve $ref: #/schemas/UnknownType
 ### "Invalid JSON syntax"
 
 **Symptom:**
+
 ```
 SyntaxError: Unexpected token } in JSON at position 245
 ```
 
 **Solution:**
+
 1. Check for trailing commas (not allowed in JSON)
 2. Check for unquoted strings
 3. Use a JSON validator or IDE with JSON support
@@ -95,6 +100,7 @@ SyntaxError: Unexpected token } in JSON at position 245
 ### "Unsupported schema feature"
 
 **Symptom:**
+
 ```
 Warning: Schema feature 'oneOf with discriminator' may not compile correctly
 ```
@@ -111,6 +117,7 @@ See [Schema Support](../schema-support.md) for supported features.
 ### "Circular reference detected"
 
 **Symptom:**
+
 ```
 Error: Maximum call stack size exceeded
 ```
@@ -126,7 +133,7 @@ Break circular references using lazy evaluation:
       "properties": {
         "children": {
           "type": "array",
-          "items": { "$ref": "#/schemas/Node" }  // This is fine
+          "items": { "$ref": "#/schemas/Node" } // This is fine
         }
       }
     }
@@ -141,11 +148,13 @@ If still failing, flatten the structure or use `maxDepth` option.
 ### "No evidence file found"
 
 **Symptom:**
+
 ```
 Error: Evidence file not found: evidence.ndjson
 ```
 
 **Solution:**
+
 1. Enable evidence capture in your tests:
    ```bash
    ACP_EVIDENCE_CAPTURE=true pnpm test
@@ -156,6 +165,7 @@ Error: Evidence file not found: evidence.ndjson
 ### "Operation not found in contract"
 
 **Symptom:**
+
 ```
 Evidence mismatch: Operation "GET /users/123" not found in contract
 ```
@@ -163,6 +173,7 @@ Evidence mismatch: Operation "GET /users/123" not found in contract
 **Solutions:**
 
 **Issue 1: Path parameter mismatch**
+
 ```json
 // Contract uses :id syntax
 { "path": "/users/:id" }
@@ -192,6 +203,7 @@ The endpoint exists in code but not in contract. Add it:
 ### "Response schema mismatch"
 
 **Symptom:**
+
 ```
 Evidence mismatch: Response body doesn't match schema
   Expected: { "id": string, "name": string }
@@ -214,17 +226,19 @@ return { id: String(user.id), name: user.name };
 ### "Missing required response field"
 
 **Symptom:**
+
 ```
 Evidence mismatch: Required field 'createdAt' missing in response
 ```
 
 **Solutions:**
+
 1. Add the field to your response
 2. Mark the field as optional in the contract:
 
 ```json
 {
-  "required": ["id", "name"],  // Remove "createdAt" from required
+  "required": ["id", "name"], // Remove "createdAt" from required
   "properties": {
     "createdAt": { "type": "string" }
   }
@@ -236,11 +250,13 @@ Evidence mismatch: Required field 'createdAt' missing in response
 ### "Connection refused"
 
 **Symptom:**
+
 ```
 Error: connect ECONNREFUSED 127.0.0.1:3000
 ```
 
 **Solutions:**
+
 1. Verify the Hub is running:
    ```bash
    curl http://localhost:3000/health
@@ -254,11 +270,13 @@ Error: connect ECONNREFUSED 127.0.0.1:3000
 ### "Unauthorized"
 
 **Symptom:**
+
 ```
 Error: 401 Unauthorized
 ```
 
 **Solutions:**
+
 1. Set your Hub token:
    ```bash
    export ACP_HUB_TOKEN=your-token-here
@@ -269,14 +287,16 @@ Error: 401 Unauthorized
 ### "Contract not found"
 
 **Symptom:**
+
 ```
 Error: 404 Contract 'my-api' not found
 ```
 
 **Solutions:**
+
 1. Verify contract name (case-sensitive):
    ```bash
-   acp hub list  # See all contracts
+   docsmyth hub list  # See all contracts
    ```
 2. Check you're connected to the right Hub instance
 3. Verify you have read access to the contract
@@ -286,11 +306,13 @@ Error: 404 Contract 'my-api' not found
 ### "npm pack failed in smoke test"
 
 **Symptom:**
+
 ```
 Smoke test failed: npm pack returned non-zero exit code
 ```
 
 **Solutions:**
+
 1. Check all packages build successfully:
    ```bash
    pnpm build
@@ -304,6 +326,7 @@ Smoke test failed: npm pack returned non-zero exit code
 CI builds taking longer than expected, cache not being used.
 
 **Solutions:**
+
 1. Verify turbo.json hash inputs:
    ```json
    {
@@ -320,11 +343,13 @@ CI builds taking longer than expected, cache not being used.
 ### "Breaking change detected but expected"
 
 **Symptom:**
+
 ```
 Error: Breaking changes detected - workflow failed
 ```
 
 **Solutions:**
+
 1. Add `[breaking]` to commit message
 2. Set `fail-on-breaking: false` in workflow
 3. Review changes and update version appropriately
@@ -337,11 +362,12 @@ Error: Breaking changes detected - workflow failed
 Evidence files consuming excessive disk space.
 
 **Solutions:**
+
 1. Configure file size limits:
    ```typescript
    createEvidenceCaptureMiddleware({
      limits: {
-       maxFileBytes: 50 * 1024 * 1024,  // 50 MB
+       maxFileBytes: 50 * 1024 * 1024, // 50 MB
        maxEventsPerOperation: 100,
      },
    });
@@ -350,7 +376,7 @@ Evidence files consuming excessive disk space.
    ```typescript
    createEvidenceCaptureMiddleware({
      limits: {
-       dedupeWindowMs: 60000,  // 60 seconds
+       dedupeWindowMs: 60000, // 60 seconds
      },
      enableDedupe: true,
    });
@@ -364,11 +390,13 @@ Evidence files consuming excessive disk space.
 
 **Symptom:**
 Stats show many rate-limited events:
+
 ```
 Stats: { written: 100, rateLimitedEvents: 5000 }
 ```
 
 **Solutions:**
+
 1. This is working as designed - rate limiting prevents runaway capture
 2. If you need more events, increase the limit:
    ```typescript
@@ -384,6 +412,7 @@ Stats: { written: 100, rateLimitedEvents: 5000 }
 Evidence file contains data that should be redacted.
 
 **Solutions:**
+
 1. Use stricter sanitization profile:
    ```typescript
    sanitizeConfig: {
@@ -404,6 +433,7 @@ Evidence file contains data that should be redacted.
    ```
 
 **Default blocked headers:**
+
 - `authorization`
 - `cookie`
 - `set-cookie`
@@ -416,17 +446,19 @@ These are always removed and cannot be captured.
 
 ## TypeScript Issues
 
-### "Cannot find module '@acp/...'"
+### "Cannot find module '@docsmyth/...'"
 
 **Symptom:**
+
 ```
-Cannot find module '@acp/cli' or its corresponding type declarations
+Cannot find module '@docsmyth/cli' or its corresponding type declarations
 ```
 
 **Solutions:**
+
 1. Install the package:
    ```bash
-   pnpm add @acp/cli
+   pnpm add @docsmyth/cli
    ```
 2. Check tsconfig.json includes node_modules:
    ```json
@@ -469,6 +501,7 @@ const user: User = UserSchema.parse(data);
 Validation taking > 1 second.
 
 **Solutions:**
+
 1. Large contracts with many schemas can be slow - this is normal
 2. Cache validation results in CI
 3. Split large contracts into smaller services
@@ -479,6 +512,7 @@ Validation taking > 1 second.
 Memory usage increases during evidence capture.
 
 **Solutions:**
+
 1. Use streaming writer (default) - don't buffer in memory
 2. Configure appropriate limits:
    ```typescript
@@ -507,19 +541,19 @@ If you can't resolve an issue:
 
 ```bash
 # Full system diagnostic
-acp doctor
+docsmyth doctor
 
 # Verbose validation
-acp validate contract.ir.json --verbose --debug
+docsmyth validate contract.ir.json --verbose --debug
 
 # Check Hub connectivity
-acp hub ping
+docsmyth hub ping
 
 # Evidence file stats
-acp evidence stats evidence.ndjson
+docsmyth evidence stats evidence.ndjson
 
 # List available commands
-acp --help
+docsmyth --help
 ```
 
 ## Related Documentation

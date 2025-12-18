@@ -17,13 +17,13 @@ ACP is a contract-first API development platform that helps teams:
 
 ```bash
 # Using pnpm (recommended)
-pnpm add -g @acp/cli
+pnpm add -g @docsmyth/cli
 
 # Or using npm
-npm install -g @acp/cli
+npm install -g @docsmyth/cli
 
 # Verify installation
-acp --version
+docsmyth --version
 ```
 
 ### Step 2: Initialize a Contract
@@ -31,7 +31,7 @@ acp --version
 ```bash
 # Create a new contract in your project
 mkdir -p contract
-acp init --output contract/contract.ir.json
+docsmyth init --output contract/contract.ir.json
 ```
 
 This creates a minimal contract IR file:
@@ -50,14 +50,14 @@ This creates a minimal contract IR file:
 ### Step 3: Validate the Contract
 
 ```bash
-acp validate contract/contract.ir.json
+docsmyth validate contract/contract.ir.json
 # ✅ Contract is valid
 ```
 
 ### Step 4: Compile to OpenAPI
 
 ```bash
-acp compile contract/contract.ir.json --format openapi --output contract/openapi.json
+docsmyth compile contract/contract.ir.json --format openapi --output contract/openapi.json
 ```
 
 You now have an OpenAPI 3.1 spec that can be used with any OpenAPI tooling!
@@ -73,6 +73,7 @@ The Contract IR is ACP's canonical format for API contracts. It's:
 - **Extensible**: Supports overlays for customization
 
 **Key components:**
+
 - `info`: Metadata about the API (title, version, description)
 - `operations`: List of API endpoints with request/response schemas
 - `schemas`: Reusable schema definitions (referenced via `$ref`)
@@ -161,7 +162,7 @@ Define your contract before writing implementation:
 Implement your API to match the contract. Use the runtime middleware to capture evidence:
 
 ```typescript
-import { createEvidenceCaptureMiddleware } from '@acp/runtime-node-express';
+import { createEvidenceCaptureMiddleware } from '@docsmyth/runtime-node-express';
 
 const evidenceMiddleware = createEvidenceCaptureMiddleware({
   contractPath: './contract/contract.ir.json',
@@ -181,7 +182,7 @@ Run your tests with evidence capture, then verify:
 ACP_EVIDENCE_CAPTURE=true pnpm test
 
 # Verify evidence matches contract
-acp evidence verify evidence.ndjson --contract contract/contract.ir.json
+docsmyth evidence verify evidence.ndjson --contract contract/contract.ir.json
 ```
 
 ### 4. CI Integration
@@ -197,8 +198,8 @@ jobs:
       - uses: actions/checkout@v4
       - run: pnpm install
       - run: ACP_EVIDENCE_CAPTURE=true pnpm test
-      - run: acp validate contract/contract.ir.json
-      - run: acp evidence verify evidence.ndjson --contract contract/contract.ir.json
+      - run: docsmyth validate contract/contract.ir.json
+      - run: docsmyth evidence verify evidence.ndjson --contract contract/contract.ir.json
 ```
 
 ### 5. Publishing Phase
@@ -206,7 +207,7 @@ jobs:
 Publish your contract to the Hub for team visibility:
 
 ```bash
-acp hub publish \
+docsmyth hub publish \
   --contract contract/contract.ir.json \
   --openapi contract/openapi.json \
   --url https://acp-hub.your-org.com
@@ -217,7 +218,7 @@ acp hub publish \
 ### Validate
 
 ```bash
-acp validate <contract-path> [options]
+docsmyth validate <contract-path> [options]
 
 Options:
   --verbose    Show detailed validation output
@@ -227,7 +228,7 @@ Options:
 ### Compile
 
 ```bash
-acp compile <contract-path> [options]
+docsmyth compile <contract-path> [options]
 
 Options:
   --format <format>   Output format (openapi, openapi3.0)
@@ -238,7 +239,7 @@ Options:
 ### Diff
 
 ```bash
-acp diff <base> <head> [options]
+docsmyth diff <base> <head> [options]
 
 Options:
   --format <format>   Output format (json, human, github)
@@ -249,23 +250,23 @@ Options:
 
 ```bash
 # Verify evidence
-acp evidence verify <evidence-path> --contract <contract-path>
+docsmyth evidence verify <evidence-path> --contract <contract-path>
 
 # Check coverage
-acp evidence coverage <evidence-path> --contract <contract-path>
+docsmyth evidence coverage <evidence-path> --contract <contract-path>
 ```
 
 ### Hub Commands
 
 ```bash
 # Publish to hub
-acp hub publish --contract <path> --openapi <path>
+docsmyth hub publish --contract <path> --openapi <path>
 
 # List contracts
-acp hub list
+docsmyth hub list
 
 # Pull contract
-acp hub pull <contract-name> --output <path>
+docsmyth hub pull <contract-name> --output <path>
 ```
 
 ## Next Steps
@@ -285,14 +286,14 @@ acp hub pull <contract-name> --output <path>
 
 ## Key Defaults Reference
 
-| Setting | Default | Description |
-|---------|---------|-------------|
-| Evidence file size | 100 MB | Max file size before rotation |
-| Rate limit | 100 events/sec | Evidence capture throttle |
-| Dedupe window | 60 seconds | Deduplication time window |
-| Sanitized headers | `authorization`, `cookie`, `set-cookie`, `x-api-key` | Never captured |
-| Masked fields | `password`, `secret`, `token`, `apikey` | Redacted in bodies |
+| Setting            | Default                                              | Description                   |
+| ------------------ | ---------------------------------------------------- | ----------------------------- |
+| Evidence file size | 100 MB                                               | Max file size before rotation |
+| Rate limit         | 100 events/sec                                       | Evidence capture throttle     |
+| Dedupe window      | 60 seconds                                           | Deduplication time window     |
+| Sanitized headers  | `authorization`, `cookie`, `set-cookie`, `x-api-key` | Never captured                |
+| Masked fields      | `password`, `secret`, `token`, `apikey`              | Redacted in bodies            |
 
 ---
 
-*Welcome to ACP! Start with `acp init` and you'll have a validated contract in minutes.*
+_Welcome to ACP! Start with `acp init` and you'll have a validated contract in minutes._

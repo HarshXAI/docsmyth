@@ -6,14 +6,14 @@
 
 import { readFileSync, existsSync } from 'fs';
 import path from 'path';
-import { validate } from '@acp/ir-spec';
-import type { ContractIR } from '@acp/ir-spec';
+import { validate } from '@docsmyth/ir-spec';
+import type { ContractIR } from '@docsmyth/ir-spec';
 import {
     diffContract,
     formatDiffReportText,
     formatDiffReportJson,
     type DiffReport,
-} from '@acp/linter';
+} from '@docsmyth/linter';
 
 export interface DiffCommandOptions {
     format?: 'text' | 'json';

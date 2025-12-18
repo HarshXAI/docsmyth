@@ -1,5 +1,5 @@
 /**
- * @acp/hub-client
+ * @docsmyth/hub-client
  *
  * Typed HTTP client for the API Contract Platform Hub.
  *

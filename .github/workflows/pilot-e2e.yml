@@ -121,23 +121,23 @@ jobs:
           uname -a
           node --version
           pnpm --version
-          
+
           echo ""
           echo "## Package Versions"
-          pnpm ls @acp/hub @acp/cli @acp/hub-client @acp/ir-sdk || true
-          
+          pnpm ls @docsmyth/hub @docsmyth/cli @docsmyth/hub-client @docsmyth/ir-sdk || true
+
           echo ""
           echo "## Disk Usage"
           df -h
-          
+
           echo ""
           echo "## Process List (node related)"
           ps aux | grep -i node || true
-          
+
           echo ""
           echo "## Open Ports"
           ss -tuln 2>/dev/null || netstat -tuln 2>/dev/null || true
-          
+
           echo ""
           echo "## Temp Directory Contents"
           ls -la /tmp/acp-pilot-e2e-* 2>/dev/null || echo "No temp directories found"

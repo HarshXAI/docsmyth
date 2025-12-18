@@ -15,7 +15,7 @@ We use [Changesets](https://github.com/changesets/changesets) for versioning and
 
 - Node.js 20+
 - pnpm 9+
-- npm account with access to `@acp` scope (for publishing)
+- npm account with access to `@docsmyth` scope (for publishing)
 
 ## Local Development
 
@@ -117,7 +117,7 @@ Ensure the package is included in:
 
 Before publishing, verify each package has:
 
-- [ ] `name` - scoped under `@acp/`
+- [ ] `name` - scoped under `@docsmyth/`
 - [ ] `version` - semantic version
 - [ ] `license` - MIT
 - [ ] `repository` - GitHub URL with `directory` field
@@ -133,18 +133,18 @@ Before publishing, verify each package has:
 
 | Package                     | Description                             |
 | --------------------------- | --------------------------------------- |
-| `@acp/cli`                  | Command-line interface                  |
-| `@acp/ir-spec`              | Contract IR types and validation        |
-| `@acp/ir-sdk`               | Builder helpers for Contract IR         |
-| `@acp/compiler-openapi`     | IR to OpenAPI compiler                  |
-| `@acp/evidence-sdk`         | Evidence capture and sanitization       |
-| `@acp/runtime-node-express` | Express middleware for evidence capture |
+| `@docsmyth/cli`                  | Command-line interface                  |
+| `@docsmyth/ir-spec`              | Contract IR types and validation        |
+| `@docsmyth/ir-sdk`               | Builder helpers for Contract IR         |
+| `@docsmyth/compiler-openapi`     | IR to OpenAPI compiler                  |
+| `@docsmyth/evidence-sdk`         | Evidence capture and sanitization       |
+| `@docsmyth/runtime-node-express` | Express middleware for evidence capture |
 
 ## Non-publishable Packages
 
 | Package                    | Reason                              |
 | -------------------------- | ----------------------------------- |
-| `@acp/express-zod-example` | Example app, marked `private: true` |
+| `@docsmyth/express-zod-example` | Example app, marked `private: true` |
 
 ## NPM Token Setup (CI)
 

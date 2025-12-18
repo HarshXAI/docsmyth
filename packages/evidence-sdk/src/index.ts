@@ -1,5 +1,5 @@
 /**
- * @acp/evidence-sdk
+ * @docsmyth/evidence-sdk
  *
  * SDK for capturing, sanitizing, and validating evidence events
  * from API runtime. Evidence events capture request/response pairs

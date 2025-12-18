@@ -1,5 +1,5 @@
 /**
- * @acp/cli
+ * @docsmyth/cli
  *
  * API Contract Platform CLI
  */

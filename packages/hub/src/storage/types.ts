@@ -4,7 +4,7 @@
  * Defines the core types for contract storage and metadata.
  */
 
-import type { ContractIR } from '@acp/ir-spec';
+import type { ContractIR } from '@docsmyth/ir-spec';
 
 /**
  * Metadata for a stored contract version

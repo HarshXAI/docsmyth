@@ -16,7 +16,7 @@ Before starting, ensure you have:
 ### 1. Install the CLI
 
 ```bash
-pnpm add -D @acp/cli
+pnpm add -D @docsmyth/cli
 ```
 
 ### 2. Create Your Contract IR
@@ -60,13 +60,13 @@ Create a `contract.json` file in your project root:
 ### 3. Validate Your Contract
 
 ```bash
-npx acp validate contract.json
+npx docsmyth validate contract.json
 ```
 
 ### 4. Compile to OpenAPI
 
 ```bash
-npx acp compile contract.json -o openapi.json
+npx docsmyth compile contract.json -o openapi.json
 ```
 
 ### 5. Set Up Evidence Capture
@@ -74,7 +74,7 @@ npx acp compile contract.json -o openapi.json
 #### Option A: Express Middleware (Recommended for Node.js)
 
 ```typescript
-import { createEvidenceMiddleware } from '@acp/runtime-node-express';
+import { createEvidenceMiddleware } from '@docsmyth/runtime-node-express';
 
 const evidence = createEvidenceMiddleware({
   contractPath: './contract.json',
@@ -88,7 +88,7 @@ app.use(evidence);
 #### Option B: Capture Proxy (Any Technology)
 
 ```bash
-npx acp proxy --target http://localhost:3000 --contract contract.json --output evidence.ndjson
+npx docsmyth proxy --target http://localhost:3000 --contract contract.json --output evidence.ndjson
 ```
 
 ### 6. Run Your Tests
@@ -98,7 +98,7 @@ Execute your test suite while evidence capture is active.
 ### 7. Verify Evidence
 
 ```bash
-npx acp evidence verify evidence.ndjson --contract contract.json
+npx docsmyth evidence verify evidence.ndjson --contract contract.json
 ```
 
 ### 8. Add to CI
@@ -124,12 +124,12 @@ jobs:
         run: pnpm install
 
       - name: Validate contract
-        run: npx acp validate contract.json
+        run: npx docsmyth validate contract.json
 
       - name: Check for breaking changes
         run: |
           git show origin/main:contract.json > base-contract.json
-          npx acp diff base-contract.json contract.json
+          npx docsmyth diff base-contract.json contract.json
 ```
 
 ## Checklist
@@ -186,4 +186,4 @@ See [CI Failure Playbook](./ci-failure-playbook.md) for common issues and soluti
 
 - Slack: #api-contract-platform
 - Email: acp-team@example.com
-- Issues: https://github.com/your-org/api-contract-platform/issues
+- Issues: https://github.com/HarshXAI/docsmyth/issues

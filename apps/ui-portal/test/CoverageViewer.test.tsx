@@ -5,7 +5,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { CoverageViewer } from '../src/components/CoverageViewer';
-import type { CoverageReport } from '@acp/hub-client';
+import type { CoverageReport } from '@docsmyth/hub-client';
 
 const mockCoverageReport: CoverageReport = {
   version: '1.0',

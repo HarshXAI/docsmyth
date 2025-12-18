@@ -15,20 +15,20 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "clean": "rm -rf dist",
-    "contract:validate": "acp validate contract/contract.ir.json",
-    "contract:compile": "acp compile contract/contract.ir.json --out dist/openapi.json",
-    "contract:publish": "acp publish contract/contract.ir.json --service my-api-service --version $npm_package_version",
-    "evidence:verify": "acp evidence verify contract/contract.ir.json --evidence ./evidence.ndjson --coverage",
+    "contract:validate": "docsmyth validate contract/contract.ir.json",
+    "contract:compile": "docsmyth compile contract/contract.ir.json --out dist/openapi.json",
+    "contract:publish": "docsmyth publish contract/contract.ir.json --service my-api-service --version $npm_package_version",
+    "evidence:verify": "docsmyth evidence verify contract/contract.ir.json --evidence ./evidence.ndjson --coverage",
     "generate:contract": "tsx scripts/generate-contract.ts"
   },
   "dependencies": {
-    "@acp/runtime-node-express": "workspace:*",
-    "@acp/ir-spec": "workspace:*",
+    "@docsmyth/runtime-node-express": "workspace:*",
+    "@docsmyth/ir-spec": "workspace:*",
     "express": "^4.21.2",
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "@acp/cli": "workspace:*",
+    "@docsmyth/cli": "workspace:*",
     "@types/express": "^5.0.0",
     "@types/node": "^20.10.0",
     "tsx": "^4.19.2",

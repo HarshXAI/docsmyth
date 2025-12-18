@@ -1,12 +1,12 @@
 {
-  "name": "@acp/hub-client",
-  "version": "0.1.1-rc.0",
+  "name": "@docsmyth/hub-client",
+  "version": "0.1.1-rc.2",
   "description": "API Contract Platform Hub Client - Typed HTTP client for the Contract Hub",
   "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-org/api-contract-platform.git",
+    "url": "https://github.com/HarshXAI/docsmyth.git",
     "directory": "packages/hub-client"
   },
   "engines": {
@@ -39,8 +39,8 @@
     "clean": "rm -rf dist *.tsbuildinfo"
   },
   "dependencies": {
-    "@acp/ir-spec": "workspace:*",
-    "@acp/linter": "workspace:*"
+    "@docsmyth/ir-spec": "workspace:*",
+    "@docsmyth/linter": "workspace:*"
   },
   "devDependencies": {
     "vitest": "^2.1.8"

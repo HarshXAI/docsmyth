@@ -282,7 +282,7 @@ function sanitizeResponse(
  *
  * @example
  * ```ts
- * import { sanitize } from '@acp/evidence-sdk';
+ * import { sanitize } from '@docsmyth/evidence-sdk';
  *
  * const sanitized = sanitize(rawEvent, {
  *   maskPii: true,

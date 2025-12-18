@@ -1,5 +1,5 @@
 {
-  "name": "@acp/ui-portal",
+  "name": "@docsmyth/ui-portal",
   "version": "0.1.1-rc.0",
   "private": true,
   "description": "API Contract Platform Portal - Web UI for browsing contracts, diffs, and coverage",
@@ -16,10 +16,10 @@
     "clean": "rm -rf dist *.tsbuildinfo"
   },
   "dependencies": {
-    "@acp/hub-client": "workspace:*",
-    "@acp/ir-sdk": "workspace:*",
-    "@acp/linter": "workspace:*",
-    "@acp/ir-spec": "workspace:*",
+    "@docsmyth/hub-client": "workspace:*",
+    "@docsmyth/ir-sdk": "workspace:*",
+    "@docsmyth/linter": "workspace:*",
+    "@docsmyth/ir-spec": "workspace:*",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.28.0"

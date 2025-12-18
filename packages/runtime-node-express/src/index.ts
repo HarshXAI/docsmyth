@@ -1,5 +1,5 @@
 /**
- * @acp/runtime-node-express
+ * @docsmyth/runtime-node-express
  *
  * Express middleware for capturing evidence events during development and testing.
  * Evidence can be verified against Contract IR schemas and injected into OpenAPI specs.

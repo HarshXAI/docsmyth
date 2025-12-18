@@ -5,7 +5,7 @@
 import { describe, it, expect } from 'vitest';
 import { applyOverlay, getOverlaySummary } from '../src/overlay-applier.js';
 import { makeContractIR, makeService, makeHttpOperation, makeResponse } from '../src/index.js';
-import type { ContractIR, Overlay } from '@acp/ir-spec';
+import type { ContractIR, Overlay } from '@docsmyth/ir-spec';
 
 // Helper to create a test contract
 function createTestContract(): ContractIR {

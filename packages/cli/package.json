@@ -1,12 +1,12 @@
 {
-  "name": "@acp/cli",
-  "version": "0.1.1-rc.0",
+  "name": "@docsmyth/cli",
+  "version": "0.1.1-rc.2",
   "description": "API Contract Platform CLI - Manage and compile API contracts",
   "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-org/api-contract-platform.git",
+    "url": "https://github.com/HarshXAI/docsmyth.git",
     "directory": "packages/cli"
   },
   "engines": {
@@ -18,7 +18,7 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "acp": "./dist/cli.js"
+    "docsmyth": "./dist/cli.js"
   },
   "exports": {
     ".": {
@@ -40,15 +40,15 @@
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix",
     "clean": "rm -rf dist *.tsbuildinfo",
-    "prepack": "pnpm -w turbo run build --filter=@acp/cli..."
+    "prepack": "pnpm -w turbo run build --filter=@docsmyth/cli..."
   },
   "dependencies": {
-    "@acp/ir-spec": "workspace:*",
-    "@acp/ir-sdk": "workspace:*",
-    "@acp/compiler-openapi": "workspace:*",
-    "@acp/evidence-sdk": "workspace:*",
-    "@acp/linter": "workspace:*",
-    "@acp/capture-proxy": "workspace:*",
+    "@docsmyth/ir-spec": "workspace:*",
+    "@docsmyth/ir-sdk": "workspace:*",
+    "@docsmyth/compiler-openapi": "workspace:*",
+    "@docsmyth/evidence-sdk": "workspace:*",
+    "@docsmyth/linter": "workspace:*",
+    "@docsmyth/capture-proxy": "workspace:*",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "commander": "^12.1.0"

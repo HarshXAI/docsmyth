@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { OpenAPIDocument, OpenAPIOperation, PathItem } from '@acp/hub-client';
+import type { OpenAPIDocument, OpenAPIOperation, PathItem } from '@docsmyth/hub-client';
 
 interface OpenAPIViewerProps {
   spec: OpenAPIDocument;

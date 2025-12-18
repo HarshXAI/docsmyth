@@ -6,8 +6,8 @@
 
 import { Router, json } from 'express';
 import type { Request, Response } from 'express';
-import { validate, type ContractIR } from '@acp/ir-spec';
-import { compileOpenApi } from '@acp/compiler-openapi';
+import { validate, type ContractIR } from '@docsmyth/ir-spec';
+import { compileOpenApi } from '@docsmyth/compiler-openapi';
 import { type ContractStorage, ConflictError } from './storage/index.js';
 import { type AuditLogger, type AuditResult } from './audit.js';
 import { createAuthMiddleware, type AuthConfig } from './auth.js';

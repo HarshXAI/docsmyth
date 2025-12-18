@@ -43,7 +43,7 @@ const VALID_HTTP_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OP
  *
  * @example
  * ```ts
- * import { validate } from '@acp/ir-spec';
+ * import { validate } from '@docsmyth/ir-spec';
  *
  * const result = validate(irDocument);
  * if (!result.valid) {

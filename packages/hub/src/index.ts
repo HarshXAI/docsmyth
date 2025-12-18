@@ -1,5 +1,5 @@
 /**
- * @acp/hub
+ * @docsmyth/hub
  *
  * Contract Hub - Central storage and serving of API contracts.
  *

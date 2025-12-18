@@ -4,8 +4,8 @@
 
 import { appendFileSync, mkdirSync, existsSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
-import type { EvidenceEvent } from '@acp/evidence-sdk';
-import { sanitize, type SanitizeConfig } from '@acp/evidence-sdk';
+import type { EvidenceEvent } from '@docsmyth/evidence-sdk';
+import { sanitize, type SanitizeConfig } from '@docsmyth/evidence-sdk';
 import type { Logger } from './logger.js';
 
 /**

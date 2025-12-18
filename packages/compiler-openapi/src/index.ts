@@ -1,13 +1,13 @@
 /**
- * @acp/compiler-openapi
+ * @docsmyth/compiler-openapi
  *
  * Compiles Contract IR to OpenAPI 3.1 specification.
  * Produces deterministic output with stable key ordering.
  * Preserves $ref references and handles recursive schemas safely.
  */
 
-import type { ContractIR, HttpOperation, HttpResponse, JsonSchemaObject } from '@acp/ir-spec';
-import { SchemaDepthError, DEFAULT_MAX_DEPTH } from '@acp/ir-spec';
+import type { ContractIR, HttpOperation, HttpResponse, JsonSchemaObject } from '@docsmyth/ir-spec';
+import { SchemaDepthError, DEFAULT_MAX_DEPTH } from '@docsmyth/ir-spec';
 import type {
   OpenAPIDocument,
   OpenAPIOperation,
@@ -19,7 +19,7 @@ import type {
 } from './types.js';
 
 export type { OpenAPIDocument } from './types.js';
-export { SchemaCycleError, SchemaDepthError } from '@acp/ir-spec';
+export { SchemaCycleError, SchemaDepthError } from '@docsmyth/ir-spec';
 
 /**
  * Example object for a single response
@@ -375,8 +375,8 @@ function sortPathItem(pathItem: OpenAPIPathItem): OpenAPIPathItem {
  *
  * @example
  * ```ts
- * import { compileOpenApi } from '@acp/compiler-openapi';
- * import type { ContractIR } from '@acp/ir-spec';
+ * import { compileOpenApi } from '@docsmyth/compiler-openapi';
+ * import type { ContractIR } from '@docsmyth/ir-spec';
  *
  * const ir: ContractIR = { ... };
  * const openapi = compileOpenApi(ir);

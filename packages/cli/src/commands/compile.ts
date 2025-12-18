@@ -6,9 +6,9 @@
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { resolve, join, basename } from 'node:path';
-import { validate, type ContractIR } from '@acp/ir-spec';
-import { compileOpenApi, type ExamplesMap, type ExampleObject } from '@acp/compiler-openapi';
-import type { EvidenceEvent } from '@acp/evidence-sdk';
+import { validate, type ContractIR } from '@docsmyth/ir-spec';
+import { compileOpenApi, type ExamplesMap, type ExampleObject } from '@docsmyth/compiler-openapi';
+import type { EvidenceEvent } from '@docsmyth/evidence-sdk';
 import { verifyEvidence } from './evidence-verify.js';
 import {
   parseNdjsonEvidence,

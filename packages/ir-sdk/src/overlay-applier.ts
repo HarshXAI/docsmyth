@@ -23,8 +23,8 @@ import type {
     ServerOverride,
     OverlaySummary,
     HttpMethod,
-} from '@acp/ir-spec';
-import { isHideByOperationId, isHideByMethodPath } from '@acp/ir-spec';
+} from '@docsmyth/ir-spec';
+import { isHideByOperationId, isHideByMethodPath } from '@docsmyth/ir-spec';
 
 /**
  * Result of applying an overlay
@@ -58,7 +58,7 @@ export interface ApplyOverlayOptions {
  *
  * @example
  * ```ts
- * import { applyOverlay } from '@acp/ir-sdk';
+ * import { applyOverlay } from '@docsmyth/ir-sdk';
  *
  * const result = applyOverlay(baseContract, publicOverlay);
  * console.log(`Hidden ${result.summary.hiddenOperationsCount} operations`);

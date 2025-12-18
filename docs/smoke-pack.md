@@ -1,18 +1,18 @@
 # Smoke Pack Testing
 
-The `pnpm smoke:pack` command is a comprehensive smoke test that validates the @acp packages work correctly when installed from tarballs in an isolated environment. This simulates what end users experience when installing from npm.
+The `pnpm smoke:pack` command is a comprehensive smoke test that validates the @docsmyth packages work correctly when installed from tarballs in an isolated environment. This simulates what end users experience when installing from npm.
 
 ## What It Tests
 
 | Step                 | Description                                                   |
 | -------------------- | ------------------------------------------------------------- |
 | 1. Build             | Compiles all workspace packages                               |
-| 2. Pack              | Creates tarballs for all @acp packages                        |
+| 2. Pack              | Creates tarballs for all @docsmyth packages                        |
 | 3. Install           | Installs tarballs in an isolated test project                 |
 | 4. Verify Tarballs   | Confirms packages came from tarballs, not npm registry        |
 | 5. Verify Resolution | Tests ESM imports and CJS require work correctly              |
 | 6. Verify Schema     | Confirms schema files are included and loadable               |
-| 7. Registry Blocking | Negative test: confirms @acp scope cannot fetch from registry |
+| 7. Registry Blocking | Negative test: confirms @docsmyth scope cannot fetch from registry |
 | 8. CLI Commands      | Runs `acp --help`, `acp compile`, etc.                        |
 
 ## Running Locally
@@ -77,7 +77,7 @@ This ensures CI runs stay under the timing thresholds after the first run.
 
 **Likely causes:**
 
-- `@acp:registry` doesn't point to `http://127.0.0.1:9`
+- `@docsmyth:registry` doesn't point to `http://127.0.0.1:9`
 - `fetch-retries` is not set to 0
 - `network-timeout` is too high
 - Proxy/firewall intercepting localhost
@@ -86,7 +86,7 @@ This ensures CI runs stay under the timing thresholds after the first run.
 
 1. Check `.npmrc` content in the test project:
    ```
-   @acp:registry=http://127.0.0.1:9
+   @docsmyth:registry=http://127.0.0.1:9
    fetch-retries=0
    fetch-retry-mintimeout=100
    fetch-retry-maxtimeout=1000
@@ -101,13 +101,13 @@ This ensures CI runs stay under the timing thresholds after the first run.
 
 **Likely causes:**
 
-- `@acp:registry` blocking failed
+- `@docsmyth:registry` blocking failed
 - Package name mismatch between tarball and install
 
 **Fixes:**
 
-- Check the `.npmrc` `@acp:registry` setting
-- Verify `npm ls --json` shows `file:` protocol for @acp packages
+- Check the `.npmrc` `@docsmyth:registry` setting
+- Verify `npm ls --json` shows `file:` protocol for @docsmyth packages
 - Check `package-lock.json` for `resolved` URLs
 
 ### Schema Load Failure
@@ -137,7 +137,7 @@ This ensures CI runs stay under the timing thresholds after the first run.
 
 - Check the full error output
 - Verify `exports` map in package.json is correct
-- Test locally with `node --input-type=module -e "import('@acp/cli')"`
+- Test locally with `node --input-type=module -e "import('@docsmyth/cli')"`
 
 ## Environment Variables
 
@@ -160,7 +160,7 @@ Using explicit `127.0.0.1` (IPv4) avoids DNS resolution variability. On some sys
 The test creates a temporary `.npmrc` in the test project that:
 
 - Uses public npm registry for external deps (ajv, commander, etc.)
-- Blocks `@acp` scope with `@acp:registry=http://127.0.0.1:9`
+- Blocks `@docsmyth` scope with `@docsmyth:registry=http://127.0.0.1:9`
 - Disables audit/fund for cleaner output
 - Sets reduced retry/timeout for fast failure
 

@@ -10,7 +10,7 @@
 
 import express, { Request, Response, NextFunction } from 'express';
 import { randomUUID } from 'crypto';
-import { createEvidenceMiddleware } from '@acp/runtime-node-express';
+import { createEvidenceMiddleware } from '@docsmyth/runtime-node-express';
 import routes from './routes.js';
 import type { ErrorResponse } from './schemas.js';
 

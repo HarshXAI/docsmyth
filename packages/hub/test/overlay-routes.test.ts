@@ -10,7 +10,7 @@ import { FileSystemStorage } from '../src/storage/index.js';
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import type { ContractIR, Overlay } from '@acp/ir-spec';
+import type { ContractIR, Overlay } from '@docsmyth/ir-spec';
 
 describe('Overlay Routes', () => {
     let app: express.Express;

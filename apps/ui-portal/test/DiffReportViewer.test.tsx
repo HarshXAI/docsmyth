@@ -5,7 +5,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { DiffReportViewer } from '../src/components/DiffReportViewer';
-import type { DiffReport } from '@acp/linter';
+import type { DiffReport } from '@docsmyth/linter';
 
 const mockDiffReport: DiffReport = {
   version: '1.0',

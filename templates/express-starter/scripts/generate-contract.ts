@@ -2,7 +2,7 @@
  * Generate Contract IR from Zod Schemas
  *
  * This script extracts Contract IR from the Zod schema definitions.
- * It's a simple example - in production, you'd use the @acp/cli extract command.
+ * It's a simple example - in production, you'd use the @docsmyth/cli extract command.
  *
  * Usage:
  *   pnpm run generate:contract
@@ -17,7 +17,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 // For this starter template, the contract is manually maintained.
 // In a real project, you would:
 //
-// 1. Use AST extraction (future @acp/cli extract command)
+// 1. Use AST extraction (future @docsmyth/cli extract command)
 // 2. Maintain the contract.ir.json directly
 // 3. Use OpenAPI-first design and convert to IR
 //
@@ -34,7 +34,7 @@ console.log('');
 console.log('To compile to OpenAPI:');
 console.log('  pnpm run contract:compile');
 console.log('');
-console.log('Future versions of @acp/cli will support:');
+console.log('Future versions of @docsmyth/cli will support:');
 console.log('  acp extract src/ --out contract/contract.ir.json');
 console.log('');
 

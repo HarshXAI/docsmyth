@@ -5,7 +5,7 @@
  * defined in a Contract IR document.
  */
 
-import type { ContractIR, HttpOperation } from '@acp/ir-spec';
+import type { ContractIR, HttpOperation } from '@docsmyth/ir-spec';
 import { createPathMatcher, normalizePath, type PathMatcher } from './path-matcher.js';
 
 /**

@@ -1,5 +1,5 @@
 import { createContext, useContext, useMemo, type ReactNode } from 'react';
-import { HubClient, createHubClient } from '@acp/hub-client';
+import { HubClient, createHubClient } from '@docsmyth/hub-client';
 
 interface HubClientContextValue {
   client: HubClient;

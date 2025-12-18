@@ -205,7 +205,7 @@ interface EvidenceBundle {
 ### Express Middleware Usage
 
 ```typescript
-import { evidenceCapture } from '@acp/runtime-node-express';
+import { evidenceCapture } from '@docsmyth/runtime-node-express';
 
 app.use(
   evidenceCapture({
@@ -219,7 +219,7 @@ app.use(
 ### CLI Verification
 
 ```bash
-acp evidence verify ./evidence.ndjson --contract ./contract-ir.json
+docsmyth evidence verify ./evidence.ndjson --contract ./contract-ir.json
 ```
 
 ## What's NOT in v0.1

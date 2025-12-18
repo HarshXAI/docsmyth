@@ -1,11 +1,11 @@
 /**
- * @acp/linter - Breaking change detection rules (v1)
+ * @docsmyth/linter - Breaking change detection rules (v1)
  *
  * This module implements the v1 ruleset for detecting breaking changes
  * between two Contract IR documents.
  */
 
-import type { ContractIR, HttpOperation, JsonSchemaObject, Ref } from '@acp/ir-spec';
+import type { ContractIR, HttpOperation, JsonSchemaObject, Ref } from '@docsmyth/ir-spec';
 import type { DiffFinding, DiffLocation, RuleId } from './types.js';
 
 /**

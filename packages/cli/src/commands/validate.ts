@@ -4,7 +4,7 @@
 
 import { readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { validate, type ValidationResult } from '@acp/ir-spec';
+import { validate, type ValidationResult } from '@docsmyth/ir-spec';
 
 export interface ValidateOptions {
   verbose?: boolean;

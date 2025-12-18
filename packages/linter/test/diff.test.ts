@@ -1,5 +1,5 @@
 /**
- * @acp/linter - Diff Engine Tests
+ * @docsmyth/linter - Diff Engine Tests
  *
  * Tests for breaking change detection across all v1 rules.
  */
@@ -8,7 +8,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import type { ContractIR } from '@acp/ir-spec';
+import type { ContractIR } from '@docsmyth/ir-spec';
 import { diffContract, formatDiffReportText, formatDiffReportJson } from '../src/index.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));

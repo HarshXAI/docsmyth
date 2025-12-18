@@ -10,7 +10,7 @@ import { OpenAPIViewer } from '../components/OpenAPIViewer';
 import { CoverageViewer } from '../components/CoverageViewer';
 import { OverlaySelector } from '../components/OverlaySelector';
 import { OverlaySummaryBadge } from '../components/OverlaySummaryBadge';
-import type { CoverageReport, OpenAPIDocument } from '@acp/hub-client';
+import type { CoverageReport, OpenAPIDocument } from '@docsmyth/hub-client';
 
 type TabId = 'docs' | 'coverage' | 'raw';
 

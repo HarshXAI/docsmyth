@@ -8,15 +8,15 @@ importers:
 
   .:
     devDependencies:
-      '@acp/cli':
-        specifier: workspace:*
-        version: link:packages/cli
       '@changesets/changelog-github':
         specifier: ^0.5.2
         version: 0.5.2
       '@changesets/cli':
         specifier: ^2.29.8
         version: 2.29.8(@types/node@20.19.27)
+      '@docsmyth/cli':
+        specifier: workspace:*
+        version: link:packages/cli
       '@types/node':
         specifier: ^20.10.0
         version: 20.19.27
@@ -44,16 +44,16 @@ importers:
 
   apps/ui-portal:
     dependencies:
-      '@acp/hub-client':
+      '@docsmyth/hub-client':
         specifier: workspace:*
         version: link:../../packages/hub-client
-      '@acp/ir-sdk':
+      '@docsmyth/ir-sdk':
         specifier: workspace:*
         version: link:../../packages/ir-sdk
-      '@acp/ir-spec':
+      '@docsmyth/ir-spec':
         specifier: workspace:*
         version: link:../../packages/ir-spec
-      '@acp/linter':
+      '@docsmyth/linter':
         specifier: workspace:*
         version: link:../../packages/linter
       react:
@@ -109,16 +109,16 @@ importers:
 
   packages/capture-proxy:
     dependencies:
-      '@acp/evidence-sdk':
+      '@docsmyth/evidence-sdk':
         specifier: workspace:*
         version: link:../evidence-sdk
-      '@acp/hub-client':
+      '@docsmyth/hub-client':
         specifier: workspace:*
         version: link:../hub-client
-      '@acp/ir-spec':
+      '@docsmyth/ir-spec':
         specifier: workspace:*
         version: link:../ir-spec
-      '@acp/path-matcher':
+      '@docsmyth/path-matcher':
         specifier: workspace:*
         version: link:../path-matcher
       http-proxy:
@@ -134,22 +134,22 @@ importers:
 
   packages/cli:
     dependencies:
-      '@acp/capture-proxy':
+      '@docsmyth/capture-proxy':
         specifier: workspace:*
         version: link:../capture-proxy
-      '@acp/compiler-openapi':
+      '@docsmyth/compiler-openapi':
         specifier: workspace:*
         version: link:../compiler-openapi
-      '@acp/evidence-sdk':
+      '@docsmyth/evidence-sdk':
         specifier: workspace:*
         version: link:../evidence-sdk
-      '@acp/ir-sdk':
+      '@docsmyth/ir-sdk':
         specifier: workspace:*
         version: link:../ir-sdk
-      '@acp/ir-spec':
+      '@docsmyth/ir-spec':
         specifier: workspace:*
         version: link:../ir-spec
-      '@acp/linter':
+      '@docsmyth/linter':
         specifier: workspace:*
         version: link:../linter
       ajv:
@@ -168,7 +168,7 @@ importers:
 
   packages/compiler-openapi:
     dependencies:
-      '@acp/ir-spec':
+      '@docsmyth/ir-spec':
         specifier: workspace:*
         version: link:../ir-spec
     devDependencies:
@@ -190,10 +190,10 @@ importers:
 
   packages/hub:
     dependencies:
-      '@acp/compiler-openapi':
+      '@docsmyth/compiler-openapi':
         specifier: workspace:*
         version: link:../compiler-openapi
-      '@acp/ir-spec':
+      '@docsmyth/ir-spec':
         specifier: workspace:*
         version: link:../ir-spec
       express:
@@ -218,10 +218,10 @@ importers:
 
   packages/hub-client:
     dependencies:
-      '@acp/ir-spec':
+      '@docsmyth/ir-spec':
         specifier: workspace:*
         version: link:../ir-spec
-      '@acp/linter':
+      '@docsmyth/linter':
         specifier: workspace:*
         version: link:../linter
     devDependencies:
@@ -231,7 +231,7 @@ importers:
 
   packages/ir-sdk:
     dependencies:
-      '@acp/ir-spec':
+      '@docsmyth/ir-spec':
         specifier: workspace:*
         version: link:../ir-spec
     devDependencies:
@@ -247,7 +247,7 @@ importers:
 
   packages/linter:
     dependencies:
-      '@acp/ir-spec':
+      '@docsmyth/ir-spec':
         specifier: workspace:*
         version: link:../ir-spec
     devDependencies:
@@ -257,7 +257,7 @@ importers:
 
   packages/path-matcher:
     dependencies:
-      '@acp/ir-spec':
+      '@docsmyth/ir-spec':
         specifier: workspace:*
         version: link:../ir-spec
     devDependencies:
@@ -267,13 +267,13 @@ importers:
 
   packages/runtime-node-express:
     dependencies:
-      '@acp/evidence-sdk':
+      '@docsmyth/evidence-sdk':
         specifier: workspace:*
         version: link:../evidence-sdk
-      '@acp/ir-spec':
+      '@docsmyth/ir-spec':
         specifier: workspace:*
         version: link:../ir-spec
-      '@acp/path-matcher':
+      '@docsmyth/path-matcher':
         specifier: workspace:*
         version: link:../path-matcher
     devDependencies:

@@ -1,11 +1,11 @@
 /**
- * @acp/hub-client - Typed HTTP client for the Contract Hub
+ * @docsmyth/hub-client - Typed HTTP client for the Contract Hub
  *
  * Provides a typed interface for all Hub API endpoints with proper
  * error handling, timeouts, and retry support.
  */
 
-import type { ContractIR } from '@acp/ir-spec';
+import type { ContractIR } from '@docsmyth/ir-spec';
 import {
     HubClientError,
     HubConnectionError,
@@ -297,7 +297,7 @@ export class HubClient {
     }
 
     // ============================================================
-    // Diff (client-side using @acp/linter)
+    // Diff (client-side using @docsmyth/linter)
     // ============================================================
 
     /**

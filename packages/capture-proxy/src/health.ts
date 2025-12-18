@@ -2,7 +2,7 @@
  * Health endpoint for the proxy
  */
 
-import type { ContractIR } from '@acp/ir-spec';
+import type { ContractIR } from '@docsmyth/ir-spec';
 
 /**
  * Proxy health status response

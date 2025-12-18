@@ -20,8 +20,8 @@ Copy the ACP contract check workflow to your repository:
 ```bash
 # From your service repository
 mkdir -p .github/workflows
-curl -o .github/workflows/acp-contract-check.yml \
-  https://raw.githubusercontent.com/your-org/api-contract-platform/main/templates/github-actions/acp-contract-check.yml
+curl -o .github/workflows/docsmyth-contract-check.yml \
+  https://raw.githubusercontent.com/HarshXAI/docsmyth/main/templates/github-actions/docsmyth-contract-check.yml
 ```
 
 ### Option 2: Use as Reusable Workflow
@@ -45,11 +45,11 @@ jobs:
       - uses: actions/checkout@v4
       - run: pnpm install
       - run: pnpm test
-  
+
   # Add ACP contract check
   contract-check:
-    needs: test  # Run after tests (which may generate evidence)
-    uses: your-org/api-contract-platform/.github/workflows/acp-contract-check.yml@main
+    needs: test # Run after tests (which may generate evidence)
+    uses: HarshXAI/docsmyth/.github/workflows/docsmyth-contract-check.yml@main
     with:
       contract-path: ./contract/contract.ir.json
       evidence-path: ./evidence.ndjson
@@ -59,19 +59,19 @@ jobs:
 
 ### Workflow Inputs
 
-| Input | Description | Default | Required |
-|-------|-------------|---------|----------|
-| `contract-path` | Path to contract IR JSON | `./contract/contract.ir.json` | No |
-| `evidence-path` | Path to evidence NDJSON (glob supported) | `./evidence.ndjson` | No |
-| `hub-url` | ACP Hub URL for publishing | _(none)_ | No |
-| `node-version` | Node.js version | `20` | No |
-| `fail-on-breaking` | Fail on breaking changes | `true` | No |
-| `skip-evidence` | Skip evidence verification | `false` | No |
+| Input              | Description                              | Default                       | Required |
+| ------------------ | ---------------------------------------- | ----------------------------- | -------- |
+| `contract-path`    | Path to contract IR JSON                 | `./contract/contract.ir.json` | No       |
+| `evidence-path`    | Path to evidence NDJSON (glob supported) | `./evidence.ndjson`           | No       |
+| `hub-url`          | ACP Hub URL for publishing               | _(none)_                      | No       |
+| `node-version`     | Node.js version                          | `20`                          | No       |
+| `fail-on-breaking` | Fail on breaking changes                 | `true`                        | No       |
+| `skip-evidence`    | Skip evidence verification               | `false`                       | No       |
 
 ### Secrets
 
-| Secret | Description | Required |
-|--------|-------------|----------|
+| Secret      | Description                  | Required               |
+| ----------- | ---------------------------- | ---------------------- |
 | `hub-token` | Token for Hub authentication | No (unless publishing) |
 
 ## Workflow Stages
@@ -81,10 +81,11 @@ jobs:
 Validates the contract IR against the schema:
 
 ```bash
-acp validate ./contract/contract.ir.json
+docsmyth validate ./contract/contract.ir.json
 ```
 
 **Failure indicates:**
+
 - Missing required fields
 - Invalid schema references
 - Unsupported constructs
@@ -94,10 +95,11 @@ acp validate ./contract/contract.ir.json
 Compiles contract to OpenAPI 3.1:
 
 ```bash
-acp compile ./contract/contract.ir.json --format openapi
+docsmyth compile ./contract/contract.ir.json --format openapi
 ```
 
 **Failure indicates:**
+
 - Complex types not supported in OpenAPI
 - Invalid operation definitions
 - Circular references
@@ -107,10 +109,11 @@ acp compile ./contract/contract.ir.json --format openapi
 Detects breaking changes against the base branch:
 
 ```bash
-acp diff base-contract.ir.json head-contract.ir.json
+docsmyth diff base-contract.ir.json head-contract.ir.json
 ```
 
 **Breaking changes include:**
+
 - Removed endpoints
 - Required fields added to request bodies
 - Response schema incompatibilities
@@ -121,10 +124,11 @@ acp diff base-contract.ir.json head-contract.ir.json
 Verifies runtime behavior matches the contract:
 
 ```bash
-acp evidence verify ./evidence.ndjson --contract ./contract/contract.ir.json
+docsmyth evidence verify ./evidence.ndjson --contract ./contract/contract.ir.json
 ```
 
 **Failure indicates:**
+
 - Implementation doesn't match contract
 - Missing operations
 - Schema mismatches
@@ -194,7 +198,7 @@ To automatically publish contracts to the Hub:
 ```yaml
 jobs:
   contract-check:
-    uses: your-org/api-contract-platform/.github/workflows/acp-contract-check.yml@main
+    uses: HarshXAI/docsmyth/.github/workflows/docsmyth-contract-check.yml@main
     with:
       hub-url: https://acp-hub.your-org.com
     secrets:
@@ -236,11 +240,13 @@ Error: Contract validation failed
 ```
 
 **Debug locally:**
+
 ```bash
-acp validate ./contract/contract.ir.json --verbose
+docsmyth validate ./contract/contract.ir.json --verbose
 ```
 
 **Common fixes:**
+
 - Check for missing required fields in contract
 - Verify schema references exist
 - Review IR spec documentation
@@ -252,11 +258,13 @@ Error: OpenAPI compilation failed
 ```
 
 **Debug locally:**
+
 ```bash
-acp compile ./contract/contract.ir.json --format openapi --verbose
+docsmyth compile ./contract/contract.ir.json --format openapi --verbose
 ```
 
 **Common fixes:**
+
 - Simplify complex union types
 - Fix circular schema references
 - Check for unsupported media types
@@ -268,18 +276,20 @@ Error: Evidence verification failed
 ```
 
 **Debug locally:**
+
 ```bash
 # Regenerate evidence
 ACP_EVIDENCE_CAPTURE=true pnpm test
 
 # Verify with verbose output
-acp evidence verify ./evidence.ndjson --contract ./contract/contract.ir.json --verbose
+docsmyth evidence verify ./evidence.ndjson --contract ./contract/contract.ir.json --verbose
 
 # Check coverage
-acp evidence coverage ./evidence.ndjson --contract ./contract/contract.ir.json
+docsmyth evidence coverage ./evidence.ndjson --contract ./contract/contract.ir.json
 ```
 
 **Common fixes:**
+
 - Update contract to match implementation
 - Add missing test cases
 - Fix response schema definitions
@@ -291,11 +301,13 @@ Error: Breaking changes detected
 ```
 
 **Review the changes:**
+
 ```bash
-acp diff base.ir.json head.ir.json --format human
+docsmyth diff base.ir.json head.ir.json --format human
 ```
 
 **Resolution options:**
+
 1. Revert the breaking change
 2. Add backward compatibility
 3. Proceed with version bump (and update fail-on-breaking)
@@ -356,7 +368,7 @@ jobs:
 
   contract-check:
     needs: test
-    uses: your-org/api-contract-platform/.github/workflows/acp-contract-check.yml@main
+    uses: HarshXAI/docsmyth/.github/workflows/docsmyth-contract-check.yml@main
     with:
       contract-path: ./contract/contract.ir.json
       evidence-path: ./evidence.ndjson
@@ -386,7 +398,7 @@ Add contract validation to your pre-commit hooks:
 
 # Validate contract before commit
 if [ -f "contract/contract.ir.json" ]; then
-  pnpm acp validate contract/contract.ir.json
+  pnpm docsmyth validate contract/contract.ir.json
 fi
 ```
 
@@ -431,11 +443,11 @@ with:
 Yes! Install the CLI and run the same commands:
 
 ```bash
-pnpm add -g @acp/cli
-acp validate ./contract/contract.ir.json
-acp compile ./contract/contract.ir.json --format openapi
-acp diff old.ir.json new.ir.json
-acp evidence verify ./evidence.ndjson --contract ./contract/contract.ir.json
+pnpm add -g @docsmyth/cli
+docsmyth validate ./contract/contract.ir.json
+docsmyth compile ./contract/contract.ir.json --format openapi
+docsmyth diff old.ir.json new.ir.json
+docsmyth evidence verify ./evidence.ndjson --contract ./contract/contract.ir.json
 ```
 
 ## Resources

@@ -6,8 +6,8 @@
 
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
-import { validate, validateOverlay, type ContractIR, type Overlay } from '@acp/ir-spec';
-import { applyOverlay, getOverlaySummary } from '@acp/ir-sdk';
+import { validate, validateOverlay, type ContractIR, type Overlay } from '@docsmyth/ir-spec';
+import { applyOverlay, getOverlaySummary } from '@docsmyth/ir-sdk';
 
 export interface OverlayApplyOptions {
     out: string;

@@ -1,12 +1,12 @@
 {
-  "name": "@acp/hub",
-  "version": "0.1.1-rc.0",
+  "name": "@docsmyth/hub",
+  "version": "0.1.1-rc.2",
   "description": "API Contract Platform Hub - Central contract storage and serving service",
   "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-org/api-contract-platform.git",
+    "url": "https://github.com/HarshXAI/docsmyth.git",
     "directory": "packages/hub"
   },
   "engines": {
@@ -18,7 +18,7 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "acp-hub": "./dist/server.js"
+    "docsmyth-hub": "./dist/server.js"
   },
   "exports": {
     ".": {
@@ -44,8 +44,8 @@
     "start": "node dist/server.js"
   },
   "dependencies": {
-    "@acp/ir-spec": "workspace:*",
-    "@acp/compiler-openapi": "workspace:*",
+    "@docsmyth/ir-spec": "workspace:*",
+    "@docsmyth/compiler-openapi": "workspace:*",
     "express": "^4.21.0"
   },
   "devDependencies": {

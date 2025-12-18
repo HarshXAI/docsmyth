@@ -7,9 +7,9 @@
 
 import * as http from 'node:http';
 import httpProxy from 'http-proxy';
-import type { ContractIR } from '@acp/ir-spec';
-import type { EvidenceEvent } from '@acp/evidence-sdk';
-import { createOperationMatcher, findOperation, type OperationMatcher } from '@acp/path-matcher';
+import type { ContractIR } from '@docsmyth/ir-spec';
+import type { EvidenceEvent } from '@docsmyth/evidence-sdk';
+import { createOperationMatcher, findOperation, type OperationMatcher } from '@docsmyth/path-matcher';
 import { loadContract, type ContractSource } from './contract-loader.js';
 import {
     createEvidenceWriter,

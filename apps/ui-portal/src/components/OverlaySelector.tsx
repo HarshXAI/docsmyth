@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useHubClient } from '../context/HubClientContext';
-import type { OverlayInfo, OverlaysListResponse } from '@acp/hub-client';
+import type { OverlayInfo, OverlaysListResponse } from '@docsmyth/hub-client';
 
 export interface OverlaySelectorProps {
   serviceName: string;

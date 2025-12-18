@@ -1,5 +1,5 @@
 /**
- * @acp/linter - Types for breaking change detection
+ * @docsmyth/linter - Types for breaking change detection
  */
 
 /**

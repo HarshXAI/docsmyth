@@ -8,7 +8,7 @@ import type { ContractIR, ValidationResult } from '../src/index.js';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const fixturesDir = join(__dirname, '../../../fixtures/contract-ir/v0.1');
 
-describe('@acp/ir-spec', () => {
+describe('@docsmyth/ir-spec', () => {
   describe('validate()', () => {
     it('should return valid for a minimal valid IR document', () => {
       const ir: ContractIR = {

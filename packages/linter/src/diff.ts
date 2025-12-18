@@ -1,11 +1,11 @@
 /**
- * @acp/linter - Contract Diff Engine
+ * @docsmyth/linter - Contract Diff Engine
  *
  * This module provides the main diffContract() function that compares
  * two Contract IR documents and reports breaking changes.
  */
 
-import type { ContractIR } from '@acp/ir-spec';
+import type { ContractIR } from '@docsmyth/ir-spec';
 import type { DiffFinding, DiffOptions, DiffReport, DiffSummary } from './types.js';
 import { v1Rules } from './rules.js';
 
