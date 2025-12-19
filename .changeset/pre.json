@@ -14,9 +14,12 @@
     "@docsmyth/ir-spec": "0.1.0",
     "@docsmyth/linter": "0.1.0",
     "@docsmyth/path-matcher": "0.1.0",
-    "@docsmyth/runtime-node-express": "0.1.0"
+    "@docsmyth/runtime-node-express": "0.1.0",
+    "@docsmyth/studio": "0.1.1-rc.8",
+    "@docsmyth/studio-web": "0.0.0"
   },
   "changesets": [
+    "beginner-mode-ux",
     "seven-insects-teach"
   ]
 }

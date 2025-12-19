@@ -1,6 +1,6 @@
 {
   "name": "@docsmyth/ir-spec",
-  "version": "0.1.1-rc.5",
+  "version": "0.1.1-rc.7",
   "description": "API Contract Platform IR Spec - JSON Schema and validation for Contract IR",
   "type": "module",
   "license": "MIT",

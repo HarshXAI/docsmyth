@@ -13,13 +13,108 @@ import { diffCommand } from './commands/diff.js';
 import { publishCommand } from './commands/publish.js';
 import { pullCommand } from './commands/pull.js';
 import { proxyCommand } from './commands/proxy.js';
+import { studioCommand } from './commands/studio.js';
 import { overlayApplyCommand, overlayValidateCommand } from './commands/overlay.js';
+import { recordCommand } from './commands/record.js';
+import { inferCommand } from './commands/infer.js';
+import { quickstartCommand } from './commands/quickstart.js';
+import { doctorCommand, printVerboseVersion } from './commands/doctor.js';
 import { version } from './version.js';
 
+// Handle --version --verbose
+if (process.argv.includes('--version') && process.argv.includes('--verbose')) {
+  printVerboseVersion();
+  process.exit(0);
+}
+
 program
-  .name('acp')
+  .name('docsmyth')
   .description('API Contract Platform CLI - Manage and compile API contracts')
   .version(version);
+
+// ============================================================================
+// BEGINNER-FRIENDLY COMMANDS
+// ============================================================================
+
+// Quickstart command - one command to rule them all
+program
+  .command('quickstart')
+  .description('🚀 One-command beginner flow: record → infer → studio')
+  .requiredOption('--target <url>', 'Upstream target URL (e.g., http://localhost:3000)')
+  .option('--proxy-port <port>', 'Proxy server port', '8080')
+  .option('--studio-port <port>', 'Studio server port', '8787')
+  .option('--host <host>', 'Host to bind to', '127.0.0.1')
+  .option('--out <path>', 'Evidence output file', './docsmyth/evidence.ndjson')
+  .option('--contract-out <path>', 'Contract output file', './docsmyth/contract.json')
+  .option('--no-open', 'Do not open browser automatically')
+  .option('--verbose', 'Show detailed output', false)
+  .action((opts) => {
+    quickstartCommand({
+      target: opts.target,
+      proxyPort: parseInt(opts.proxyPort, 10),
+      studioPort: parseInt(opts.studioPort, 10),
+      host: opts.host,
+      evidenceOut: opts.out,
+      contractOut: opts.contractOut,
+      open: opts.open,
+      verbose: opts.verbose,
+    });
+  });
+
+// Record command - capture traffic without a contract
+program
+  .command('record')
+  .description('📹 Record HTTP traffic as evidence (no contract required)')
+  .requiredOption('--target <url>', 'Upstream target URL (e.g., http://localhost:3000)')
+  .option('--listen <address>', 'Proxy listen address', '127.0.0.1:8080')
+  .option('--out <path>', 'Evidence output file', '/tmp/evidence.ndjson')
+  .option('--max-body-bytes <bytes>', 'Maximum body size before truncation', '65536')
+  .option('--event-rate-limit <n>', 'Max events per second (0=unlimited)', '100')
+  .option('--verbose', 'Show detailed output', false)
+  .action((opts) => {
+    recordCommand({
+      target: opts.target,
+      listen: opts.listen,
+      out: opts.out,
+      maxBodyBytes: parseInt(opts.maxBodyBytes, 10),
+      eventRateLimit: parseInt(opts.eventRateLimit, 10),
+      verbose: opts.verbose,
+    });
+  });
+
+// Infer command - generate contract from evidence
+program
+  .command('infer')
+  .description('📝 Infer a Contract IR from evidence NDJSON')
+  .requiredOption('--evidence <path>', 'Path to evidence NDJSON file')
+  .requiredOption('--out <path>', 'Output path for generated contract')
+  .option('--service <name>', 'Service name for the contract', 'my-service')
+  .option('--version <version>', 'Service version', '0.0.1')
+  .option('--verbose', 'Show detailed output', false)
+  .action((opts) => {
+    inferCommand({
+      evidence: opts.evidence,
+      out: opts.out,
+      service: opts.service,
+      version: opts.version,
+      verbose: opts.verbose,
+    });
+  });
+
+// Doctor command - diagnose installation
+program
+  .command('doctor')
+  .description('🩺 Diagnose your Docsmyth installation and environment')
+  .option('--verbose', 'Show detailed diagnostic info', false)
+  .action((opts) => {
+    doctorCommand({
+      verbose: opts.verbose,
+    });
+  });
+
+// ============================================================================
+// CORE COMMANDS
+// ============================================================================
 
 program
   .command('validate <path>')
@@ -183,6 +278,25 @@ program
       eventRateLimit: parseInt(opts.eventRateLimit, 10),
       captureUnmatched: opts.captureUnmatched,
       verbose: opts.verbose,
+    });
+  });
+
+// Studio command for web UI
+program
+  .command('studio')
+  .description('Launch the Docsmyth Studio web UI for contract exploration')
+  .option('--contract <path>', 'Path to Contract IR JSON file')
+  .option('--evidence <path>', 'Path to Evidence NDJSON file (can be used alone for inference mode)')
+  .option('--port <number>', 'Server port', '8787')
+  .option('--host <address>', 'Server host', '127.0.0.1')
+  .option('--no-open', 'Do not open browser automatically')
+  .action((opts) => {
+    studioCommand({
+      contract: opts.contract,
+      evidence: opts.evidence,
+      port: parseInt(opts.port, 10),
+      host: opts.host,
+      open: opts.open,
     });
   });
 

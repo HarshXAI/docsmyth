@@ -13,5 +13,15 @@ export {
     type EvidenceWriter,
     type EvidenceWriterOptions,
 } from './evidence-writer.js';
+export {
+    createContractlessWriter,
+    type ContractlessWriter,
+    type ContractlessWriterOptions,
+} from './contractless-writer.js';
+export {
+    startRecordProxy,
+    type RecordProxyConfig,
+    type RecordProxyServer,
+} from './record-proxy.js';
 export { createLogger, type Logger, type LogLevel } from './logger.js';
 export { type ProxyHealthStatus } from './health.js';

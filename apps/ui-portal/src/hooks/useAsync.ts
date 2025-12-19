@@ -48,7 +48,6 @@ export function useAsync<T>(
                 isConnectionError,
             });
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, deps);
 
     useEffect(() => {

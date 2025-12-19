@@ -1,6 +1,6 @@
 {
   "name": "@docsmyth/path-matcher",
-  "version": "0.1.1-rc.5",
+  "version": "0.1.1-rc.7",
   "description": "API Contract Platform Path Matcher - Shared path matching utilities for IR path patterns",
   "type": "module",
   "license": "MIT",
