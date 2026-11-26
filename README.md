@@ -12,6 +12,18 @@ FastAPI        →  Contract IR  →  AsyncAPI
 Go + Chi       →  Contract IR  →  ...
 ```
 
+## How it works
+
+```mermaid
+flowchart LR
+    SRC["Source code<br/>(Express + Zod)"] -->|AST discovery| IR["Contract IR v0.1<br/>ir-spec + ir-sdk"]
+    IR --> COMP["compiler-openapi"] --> OAS["OpenAPI 3.1"]
+    EV["Runtime evidence<br/>captures"] --> VAL["Evidence validation"]
+    IR --> VAL --> COV["Coverage report"]
+    CLI["CLI"] -.-> IR
+    UI["UI portal<br/>(diffs, coverage)"] -.-> OAS
+```
+
 ## Quick Start
 
 ```bash
